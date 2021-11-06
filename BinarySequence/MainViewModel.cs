@@ -73,7 +73,7 @@ namespace BinarySequence
 
         private void GenerateBinary()
         {
-            //PointsBinary.Clear();
+            PointsBinary.Clear();
 
             for (int i = 0; i < Amount; i++)
             {

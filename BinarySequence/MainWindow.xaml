@@ -25,7 +25,7 @@
         <oxy:Plot Grid.Column="0" Grid.Row="0" Title="Битовая последовательность"
                   InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2">
             <oxy:Plot.Series>
-                <oxy:LineSeries ItemsSource="{Binding PointsBinary}" 
+                <oxy:StairStepSeries ItemsSource="{Binding PointsBinary}" 
                                 Color="Navy" 
                                 MarkerType="Circle" 
                                 MarkerFill="Transparent" 
