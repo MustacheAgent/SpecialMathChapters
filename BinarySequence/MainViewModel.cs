@@ -186,15 +186,16 @@ namespace BinarySequence
             int p = _freqDiscr / _bitrate;
             int size = p * BitAmount;
             int k = 0;
+            int delta = _freqCarry / 2;
             for (int i = 0; i < size; i++)
             {
                 if (PointsBinary[k].Y == 0)
                 {
-                    PointsFSK.Add(FSK.Generate(i, _freqCarry, _freqDiscr, -1));
+                    PointsFSK.Add(FSK.Generate(i, _freqCarry, _freqDiscr, -delta));
                 }
                 else
                 {
-                    PointsFSK.Add(FSK.Generate(i, _freqCarry, _freqDiscr, 1));
+                    PointsFSK.Add(FSK.Generate(i, _freqCarry, _freqDiscr, delta));
                 }
                 if ((i % p == 0) && (i != 0))
                 {

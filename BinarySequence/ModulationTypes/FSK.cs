@@ -7,7 +7,7 @@ namespace BinarySequence.ModulationTypes
     {
         public static DataPoint Generate(int x, double freq, double freqDiscr, double multiplier)
         {
-            return new DataPoint(x, Math.Sin(2 * Math.PI * x * freq * multiplier / freqDiscr));
+            return new DataPoint(x, Math.Sin(2 * Math.PI * x * (freq + multiplier) / freqDiscr));
         }
     }
 }
