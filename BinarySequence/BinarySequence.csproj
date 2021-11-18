@@ -65,6 +65,7 @@
     </ApplicationDefinition>
     <Compile Include="ModulationTypes\ASK.cs" />
     <Compile Include="ModulationTypes\FSK.cs" />
+    <Compile Include="ModulationTypes\PSK.cs" />
     <Compile Include="SignalCarrier.cs" />
     <Compile Include="RelayCommand.cs" />
     <Page Include="MainWindow.xaml">

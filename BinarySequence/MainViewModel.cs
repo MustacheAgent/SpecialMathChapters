@@ -1,4 +1,5 @@
-﻿using OxyPlot;
+﻿using BinarySequence.ModulationTypes;
+using OxyPlot;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -74,6 +75,9 @@ namespace BinarySequence
 
         public ICommand GenerateBits { get; set; }
         public ICommand GenerateSignal { get; set; }
+        public ICommand GenerateASK { get; set; }
+        public ICommand GenerateFSK { get; set; }
+        public ICommand GeneratePSK { get; set; }
 
         public List<DataPoint> PointsBinary { get; set; }
         public List<DataPoint> PointsCarrier { get; set; }
@@ -113,6 +117,24 @@ namespace BinarySequence
                 GenerateCarrier();
                 Invalidate++;
             });
+
+            GenerateASK = new RelayCommand(o =>
+            {
+                GenerateAmp();
+                Invalidate++;
+            });
+
+            GenerateFSK = new RelayCommand(o =>
+            {
+                GenerateFreq();
+                Invalidate++;
+            });
+
+            GeneratePSK = new RelayCommand(o =>
+            {
+                GeneratePhase();
+                Invalidate++;
+            });
         }
 
         private void GenerateBinary()
@@ -131,7 +153,76 @@ namespace BinarySequence
             int size = p * BitAmount;
             for (int i = 0; i < size; i++)
             {
-                PointsCarrier.Add(carrier.GeneratePoint(_freqCarry, i));
+                PointsCarrier.Add(carrier.GeneratePoint(_freqCarry, i, _freqDiscr));
+            }
+        }
+
+        private void GenerateAmp()
+        {
+            PointsASK.Clear();
+            int p = _freqDiscr / _bitrate;
+            int size = p * BitAmount;
+            int k = 0;
+            for (int i = 0; i < size; i++)
+            {
+                if (PointsBinary[k].Y == 0)
+                {
+                    PointsASK.Add(ASK.Generate(i, _freqCarry, _freqDiscr, 0.5));
+                }
+                else
+                {
+                    PointsASK.Add(ASK.Generate(i, _freqCarry, _freqDiscr, 1));
+                }
+                if ((i % p == 0) && (i != 0))
+                {
+                    k++;
+                }
+            }
+        }
+
+        private void GenerateFreq()
+        {
+            PointsFSK.Clear();
+            int p = _freqDiscr / _bitrate;
+            int size = p * BitAmount;
+            int k = 0;
+            for (int i = 0; i < size; i++)
+            {
+                if (PointsBinary[k].Y == 0)
+                {
+                    PointsFSK.Add(FSK.Generate(i, _freqCarry, _freqDiscr, -1));
+                }
+                else
+                {
+                    PointsFSK.Add(FSK.Generate(i, _freqCarry, _freqDiscr, 1));
+                }
+                if ((i % p == 0) && (i != 0))
+                {
+                    k++;
+                }
+            }
+        }
+
+        private void GeneratePhase()
+        {
+            PointsPSK.Clear();
+            int p = _freqDiscr / _bitrate;
+            int size = p * BitAmount;
+            int k = 0;
+            for (int i = 0; i < size; i++)
+            {
+                if (PointsBinary[k].Y == 0)
+                {
+                    PointsPSK.Add(PSK.Generate(i, _freqCarry, _freqDiscr, -1));
+                }
+                else
+                {
+                    PointsPSK.Add(PSK.Generate(i, _freqCarry, _freqDiscr, 1));
+                }
+                if ((i % p == 0) && (i != 0))
+                {
+                    k++;
+                }
             }
         }
     }

@@ -3,11 +3,11 @@ using System;
 
 namespace BinarySequence.ModulationTypes
 {
-    public static class FSK
+    public class PSK
     {
         public static DataPoint Generate(int x, double freq, double freqDiscr, double multiplier)
         {
-            return new DataPoint(x, Math.Sin(2 * Math.PI * x * freq * multiplier / freqDiscr));
+            return new DataPoint(x, Math.Sin(2 * Math.PI * x * freq / freqDiscr * multiplier));
         }
     }
 }

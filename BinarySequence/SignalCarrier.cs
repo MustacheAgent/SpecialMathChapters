@@ -45,9 +45,9 @@ namespace BinarySequence
         /// <param name="freq">Частота.</param>
         /// <param name="x">Период дискретизации.</param>
         /// <returns>Точка несущего сигнала.</returns>
-        public DataPoint GeneratePoint(double freq, int x)
+        public DataPoint GeneratePoint(double freq, int x, double freqDiscr)
         {
-            return new DataPoint(x, Math.Sin(x * freq));
+            return new DataPoint(x, Math.Sin(2 * Math.PI * x * freq / freqDiscr));
         }
     }
 }

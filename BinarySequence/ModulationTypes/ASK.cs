@@ -3,20 +3,11 @@ using System;
 
 namespace BinarySequence.ModulationTypes
 {
-    public class ASK
+    public static class ASK
     {
-        private double _currentX;
-
-        public ASK()
+        public static DataPoint Generate(int x, double freq, double freqDiscr, double amp)
         {
-            _currentX = 0;
-        }
-
-        public DataPoint GeneratePoint(double phaseModul, double phaseCarrier)
-        {
-            DataPoint point = new DataPoint(_currentX, Math.Sin(phaseModul) * Math.Sin(phaseCarrier));
-            _currentX++;
-            return point;
+            return new DataPoint(x, amp * Math.Sin(2 * Math.PI * x * freq / freqDiscr));
         }
     }
 }
