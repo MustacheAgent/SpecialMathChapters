@@ -105,7 +105,7 @@
                   InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2">
             <oxy:Plot.Series>
                 <oxy:LineSeries ItemsSource="{Binding PointsPSK}" 
-                                Color="Crimson"
+                                Color="DarkGoldenrod"
                                 MarkerType="Circle" 
                                 MarkerFill="Transparent" 
                                 MarkerSize="3"

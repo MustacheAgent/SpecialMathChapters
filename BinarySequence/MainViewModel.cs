@@ -101,7 +101,7 @@ namespace BinarySequence
             carrier = new SignalCarrier();
 
             Invalidate = 0;
-            BitAmount = 16;
+            BitAmount = 64;
             Bitrate = 2;
             FrequencyDiscr = 250;
             FrequencyCarry = 3;
