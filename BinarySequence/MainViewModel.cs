@@ -17,18 +17,30 @@ namespace BinarySequence
         }
 
         #region параметры
-        private int _amount;
+        private int _freqDiscr;
+        private int _freqCarry;
+        private int _bitAmount;
         private int _invalidate;
+        private int _bitrate;
         #endregion
 
         #region свойства 
-        public int Amount
+        public int BitAmount
         {
-            get => _amount;
+            get => _bitAmount;
             set
             {
-                _amount = value;
-                OnPropertyChanged(nameof(Amount));
+                _bitAmount = value;
+                OnPropertyChanged();
+            }
+        }
+        public int Bitrate
+        {
+            get => _bitrate / 1000;
+            set
+            {
+                _bitrate = value * 1000;
+                OnPropertyChanged();
             }
         }
         public int Invalidate
@@ -37,12 +49,31 @@ namespace BinarySequence
             set
             {
                 _invalidate = value;
-                OnPropertyChanged(nameof(Invalidate));
+                OnPropertyChanged();
+            }
+        }
+        public int FrequencyDiscr
+        {
+            get => _freqDiscr / 1000;
+            set
+            {
+                _freqDiscr = value * 1000;
+                OnPropertyChanged();
+            }
+        }
+        public int FrequencyCarry
+        {
+            get => _freqCarry / 1000;
+            set
+            {
+                _freqCarry = value * 1000;
+                OnPropertyChanged();
             }
         }
         #endregion 
 
-        public ICommand Generate { get; set; }
+        public ICommand GenerateBits { get; set; }
+        public ICommand GenerateSignal { get; set; }
 
         public List<DataPoint> PointsBinary { get; set; }
         public List<DataPoint> PointsCarrier { get; set; }
@@ -51,6 +82,7 @@ namespace BinarySequence
         public List<DataPoint> PointsPSK { get; set; }
 
         Random random;
+        SignalCarrier carrier;
 
         public MainViewModel()
         {
@@ -62,25 +94,45 @@ namespace BinarySequence
 
             random = new Random();
 
-            Invalidate = 0;
-            Amount = 150;
+            carrier = new SignalCarrier();
 
-            Generate = new RelayCommand(o =>
+            Invalidate = 0;
+            BitAmount = 16;
+            Bitrate = 2;
+            FrequencyDiscr = 250;
+            FrequencyCarry = 3;
+
+            GenerateBits = new RelayCommand(o =>
             {
                 GenerateBinary();
+                Invalidate++;
+            });
+
+            GenerateSignal = new RelayCommand(o =>
+            {
+                GenerateCarrier();
+                Invalidate++;
             });
         }
 
         private void GenerateBinary()
         {
             PointsBinary.Clear();
-
-            for (int i = 0; i < Amount; i++)
+            for (int i = 0; i < BitAmount; i++)
             {
                 PointsBinary.Add(new DataPoint(i, random.Next(2)));
             }
+        }
 
-            Invalidate++;
+        private void GenerateCarrier()
+        {
+            PointsCarrier.Clear();
+            int p = _freqDiscr / _bitrate;
+            int size = p * BitAmount;
+            for (int i = 0; i < size; i++)
+            {
+                PointsCarrier.Add(carrier.GeneratePoint(_freqCarry, i));
+            }
         }
     }
 }
