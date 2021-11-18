@@ -104,7 +104,7 @@ namespace BinarySequence
             BitAmount = 64;
             Bitrate = 2;
             FrequencyDiscr = 250;
-            FrequencyCarry = 3;
+            FrequencyCarry = 1;
 
             GenerateBits = new RelayCommand(o =>
             {
@@ -191,11 +191,11 @@ namespace BinarySequence
             {
                 if (PointsBinary[k].Y == 0)
                 {
-                    PointsFSK.Add(FSK.Generate(i, _freqCarry, _freqDiscr, -delta));
+                    PointsFSK.Add(FSK.Generate(i, _freqCarry, _freqDiscr, 0));
                 }
                 else
                 {
-                    PointsFSK.Add(FSK.Generate(i, _freqCarry, _freqDiscr, delta));
+                    PointsFSK.Add(FSK.Generate(i, _freqCarry, _freqDiscr, 2 * _freqCarry));
                 }
                 if ((i % p == 0) && (i != 0))
                 {
