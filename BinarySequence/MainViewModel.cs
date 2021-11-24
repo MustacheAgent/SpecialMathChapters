@@ -106,76 +106,73 @@ namespace BinarySequence
             random = new Random();
 
             Invalidate = 0;
-            BitAmount = 64;
+            BitAmount = 32;
             Bitrate = 2;
             FrequencyDiscr = 250;
             FrequencyCarry = 1;
-            Tau = 15;
+            Tau = 1000;
 
             GenerateBits = new RelayCommand(o =>
             {
-                GenerateSourceBinary();
+                GenerateBinary(PointsSourceBinary, BitAmount);
                 Invalidate++;
             });
 
             GenerateRandomBits = new RelayCommand(o =>
             {
-                GenerateRandomBinary();
+                GenerateBinary(PointsRandomBinary, BitAmount * 2);
                 Invalidate++;
             });
 
             GenerateASK = new RelayCommand(o =>
             {
-                GenerateSourceAmp();
+                AmplitudeShiftKeying(PointsSourceBinary, PointsMainSignal);
+                AmplitudeShiftKeying(PointsRandomBinary, PointsResearchSignal);
+                InsertSequence(PointsResearchSignal, PointsMainSignal);
                 Invalidate++;
             });
 
             GenerateFSK = new RelayCommand(o =>
             {
-                GenerateSourceFreq();
+                FrequencyShiftKeying(PointsSourceBinary, PointsMainSignal);
+                FrequencyShiftKeying(PointsRandomBinary, PointsResearchSignal);
+                InsertSequence(PointsResearchSignal, PointsMainSignal);
                 Invalidate++;
             });
 
             GeneratePSK = new RelayCommand(o =>
             {
-                GenerateSourcePhase();
+                PhaseShiftKeying(PointsSourceBinary, PointsMainSignal);
+                PhaseShiftKeying(PointsRandomBinary, PointsResearchSignal);
+                InsertSequence(PointsResearchSignal, PointsMainSignal);
                 Invalidate++;
             });
         }
 
-        private void GenerateSourceBinary()
+        private void GenerateBinary(List<DataPoint> points, int size)
         {
-            PointsSourceBinary.Clear();
-            for (int i = 0; i < BitAmount; i++)
+            points.Clear();
+            for (int i = 0; i < size; i++)
             {
-                PointsSourceBinary.Add(new DataPoint(i, random.Next(2)));
+                points.Add(new DataPoint(i, random.Next(2)));
             }
         }
 
-        private void GenerateRandomBinary()
+        private void AmplitudeShiftKeying(List<DataPoint> main, List<DataPoint> modulated)
         {
-            PointsRandomBinary.Clear();
-            for (int i = 0; i < BitAmount * 2; i++)
-            {
-                PointsRandomBinary.Add(new DataPoint(i, random.Next(2)));
-            }
-        }
-
-        private void GenerateSourceAmp()
-        {
-            PointsMainSignal.Clear();
+            modulated.Clear();
             int p = _freqDiscr / _bitrate;
-            int size = p * BitAmount;
+            int size = p * main.Count;
             int k = 0;
             for (int i = 0; i < size; i++)
             {
-                if (PointsSourceBinary[k].Y == 0)
+                if (main[k].Y == 0)
                 {
-                    PointsMainSignal.Add(ASK.Generate(i, _freqCarry, _freqDiscr, 0.5));
+                    modulated.Add(ASK.Generate(i, _freqCarry, _freqDiscr, 0.5));
                 }
                 else
                 {
-                    PointsMainSignal.Add(ASK.Generate(i, _freqCarry, _freqDiscr, 1));
+                    modulated.Add(ASK.Generate(i, _freqCarry, _freqDiscr, 1));
                 }
                 if ((i % p == 0) && (i != 0))
                 {
@@ -184,21 +181,21 @@ namespace BinarySequence
             }
         }
 
-        private void GenerateSourceFreq()
+        private void FrequencyShiftKeying(List<DataPoint> main, List<DataPoint> modulated)
         {
-            PointsMainSignal.Clear();
+            modulated.Clear();
             int p = _freqDiscr / _bitrate;
-            int size = p * BitAmount;
+            int size = p * main.Count;
             int k = 0;
             for (int i = 0; i < size; i++)
             {
-                if (PointsSourceBinary[k].Y == 0)
+                if (main[k].Y == 0)
                 {
-                    PointsMainSignal.Add(FSK.Generate(i, _freqCarry, _freqDiscr, 0));
+                    modulated.Add(FSK.Generate(i, _freqCarry, _freqDiscr, 0));
                 }
                 else
                 {
-                    PointsMainSignal.Add(FSK.Generate(i, _freqCarry, _freqDiscr, 2 * _freqCarry));
+                    modulated.Add(FSK.Generate(i, _freqCarry, _freqDiscr, 2 * _freqCarry));
                 }
                 if ((i % p == 0) && (i != 0))
                 {
@@ -207,26 +204,34 @@ namespace BinarySequence
             }
         }
 
-        private void GenerateSourcePhase()
+        private void PhaseShiftKeying(List<DataPoint> main, List<DataPoint> modulated)
         {
-            PointsMainSignal.Clear();
+            modulated.Clear();
             int p = _freqDiscr / _bitrate;
-            int size = p * BitAmount;
+            int size = p * main.Count;
             int k = 0;
             for (int i = 0; i < size; i++)
             {
-                if (PointsSourceBinary[k].Y == 0)
+                if (main[k].Y == 0)
                 {
-                    PointsMainSignal.Add(PSK.Generate(i, _freqCarry, _freqDiscr, -1));
+                    modulated.Add(PSK.Generate(i, _freqCarry, _freqDiscr, -1));
                 }
                 else
                 {
-                    PointsMainSignal.Add(PSK.Generate(i, _freqCarry, _freqDiscr, 1));
+                    modulated.Add(PSK.Generate(i, _freqCarry, _freqDiscr, 1));
                 }
                 if ((i % p == 0) && (i != 0))
                 {
                     k++;
                 }
+            }
+        }
+
+        private void InsertSequence(List<DataPoint> main, List<DataPoint> inserted)
+        {
+            for (int i = 0; i < inserted.Count; i++)
+            {
+                main[i + Tau] = new DataPoint(main[i + Tau].X, inserted[i].Y);
             }
         }
     }
