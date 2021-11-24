@@ -23,6 +23,7 @@ namespace BinarySequence
         private int _bitAmount;
         private int _invalidate;
         private int _bitrate;
+        private int _tau;
         #endregion
 
         #region свойства 
@@ -71,107 +72,110 @@ namespace BinarySequence
                 OnPropertyChanged();
             }
         }
+        public int Tau
+        {
+            get => _tau;
+            set
+            {
+                _tau = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion 
 
         public ICommand GenerateBits { get; set; }
-        public ICommand GenerateSignal { get; set; }
+        public ICommand GenerateRandomBits { get; set; }
         public ICommand GenerateASK { get; set; }
         public ICommand GenerateFSK { get; set; }
         public ICommand GeneratePSK { get; set; }
 
-        public List<DataPoint> PointsBinary { get; set; }
-        public List<DataPoint> PointsCarrier { get; set; }
-        public List<DataPoint> PointsASK { get; set; }
-        public List<DataPoint> PointsFSK { get; set; }
-        public List<DataPoint> PointsPSK { get; set; }
+        public List<DataPoint> PointsSourceBinary { get; set; }
+        public List<DataPoint> PointsRandomBinary { get; set; }
+        public List<DataPoint> PointsMainSignal { get; set; }
+        public List<DataPoint> PointsResearchSignal { get; set; }
 
         Random random;
-        SignalCarrier carrier;
 
         public MainViewModel()
         {
-            PointsBinary = new List<DataPoint>();
-            PointsCarrier = new List<DataPoint>();
-            PointsASK = new List<DataPoint>();
-            PointsFSK = new List<DataPoint>();
-            PointsPSK = new List<DataPoint>();
+            PointsSourceBinary = new List<DataPoint>();
+            PointsRandomBinary = new List<DataPoint>();
+            PointsMainSignal = new List<DataPoint>();
+            PointsResearchSignal = new List<DataPoint>();
 
             random = new Random();
-
-            carrier = new SignalCarrier();
 
             Invalidate = 0;
             BitAmount = 64;
             Bitrate = 2;
             FrequencyDiscr = 250;
             FrequencyCarry = 1;
+            Tau = 15;
 
             GenerateBits = new RelayCommand(o =>
             {
-                GenerateBinary();
+                GenerateSourceBinary();
                 Invalidate++;
             });
 
-            GenerateSignal = new RelayCommand(o =>
+            GenerateRandomBits = new RelayCommand(o =>
             {
-                GenerateCarrier();
+                GenerateRandomBinary();
                 Invalidate++;
             });
 
             GenerateASK = new RelayCommand(o =>
             {
-                GenerateAmp();
+                GenerateSourceAmp();
                 Invalidate++;
             });
 
             GenerateFSK = new RelayCommand(o =>
             {
-                GenerateFreq();
+                GenerateSourceFreq();
                 Invalidate++;
             });
 
             GeneratePSK = new RelayCommand(o =>
             {
-                GeneratePhase();
+                GenerateSourcePhase();
                 Invalidate++;
             });
         }
 
-        private void GenerateBinary()
+        private void GenerateSourceBinary()
         {
-            PointsBinary.Clear();
+            PointsSourceBinary.Clear();
             for (int i = 0; i < BitAmount; i++)
             {
-                PointsBinary.Add(new DataPoint(i, random.Next(2)));
+                PointsSourceBinary.Add(new DataPoint(i, random.Next(2)));
             }
         }
 
-        private void GenerateCarrier()
+        private void GenerateRandomBinary()
         {
-            PointsCarrier.Clear();
-            int p = _freqDiscr / _bitrate;
-            int size = p * BitAmount;
-            for (int i = 0; i < size; i++)
+            PointsRandomBinary.Clear();
+            for (int i = 0; i < BitAmount * 2; i++)
             {
-                PointsCarrier.Add(carrier.GeneratePoint(_freqCarry, i, _freqDiscr));
+                PointsRandomBinary.Add(new DataPoint(i, random.Next(2)));
             }
         }
 
-        private void GenerateAmp()
+        private void GenerateSourceAmp()
         {
-            PointsASK.Clear();
+            PointsMainSignal.Clear();
             int p = _freqDiscr / _bitrate;
             int size = p * BitAmount;
             int k = 0;
             for (int i = 0; i < size; i++)
             {
-                if (PointsBinary[k].Y == 0)
+                if (PointsSourceBinary[k].Y == 0)
                 {
-                    PointsASK.Add(ASK.Generate(i, _freqCarry, _freqDiscr, 0.5));
+                    PointsMainSignal.Add(ASK.Generate(i, _freqCarry, _freqDiscr, 0.5));
                 }
                 else
                 {
-                    PointsASK.Add(ASK.Generate(i, _freqCarry, _freqDiscr, 1));
+                    PointsMainSignal.Add(ASK.Generate(i, _freqCarry, _freqDiscr, 1));
                 }
                 if ((i % p == 0) && (i != 0))
                 {
@@ -180,22 +184,21 @@ namespace BinarySequence
             }
         }
 
-        private void GenerateFreq()
+        private void GenerateSourceFreq()
         {
-            PointsFSK.Clear();
+            PointsMainSignal.Clear();
             int p = _freqDiscr / _bitrate;
             int size = p * BitAmount;
             int k = 0;
-            int delta = _freqCarry / 2;
             for (int i = 0; i < size; i++)
             {
-                if (PointsBinary[k].Y == 0)
+                if (PointsSourceBinary[k].Y == 0)
                 {
-                    PointsFSK.Add(FSK.Generate(i, _freqCarry, _freqDiscr, 0));
+                    PointsMainSignal.Add(FSK.Generate(i, _freqCarry, _freqDiscr, 0));
                 }
                 else
                 {
-                    PointsFSK.Add(FSK.Generate(i, _freqCarry, _freqDiscr, 2 * _freqCarry));
+                    PointsMainSignal.Add(FSK.Generate(i, _freqCarry, _freqDiscr, 2 * _freqCarry));
                 }
                 if ((i % p == 0) && (i != 0))
                 {
@@ -204,21 +207,21 @@ namespace BinarySequence
             }
         }
 
-        private void GeneratePhase()
+        private void GenerateSourcePhase()
         {
-            PointsPSK.Clear();
+            PointsMainSignal.Clear();
             int p = _freqDiscr / _bitrate;
             int size = p * BitAmount;
             int k = 0;
             for (int i = 0; i < size; i++)
             {
-                if (PointsBinary[k].Y == 0)
+                if (PointsSourceBinary[k].Y == 0)
                 {
-                    PointsPSK.Add(PSK.Generate(i, _freqCarry, _freqDiscr, -1));
+                    PointsMainSignal.Add(PSK.Generate(i, _freqCarry, _freqDiscr, -1));
                 }
                 else
                 {
-                    PointsPSK.Add(PSK.Generate(i, _freqCarry, _freqDiscr, 1));
+                    PointsMainSignal.Add(PSK.Generate(i, _freqCarry, _freqDiscr, 1));
                 }
                 if ((i % p == 0) && (i != 0))
                 {

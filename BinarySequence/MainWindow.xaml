@@ -6,13 +6,13 @@
         xmlns:local="clr-namespace:BinarySequence"
         xmlns:oxy="http://oxyplot.org/wpf"
         mc:Ignorable="d"
-        Title="Модуляция сигнала" Height="1000" Width="1500" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
+        Title="Модуляция сигнала" Height="800" Width="1500" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
     <Grid Margin="5">
         <Grid.RowDefinitions>
-            <RowDefinition Height="7*"/>
+            <RowDefinition Height="5*"/>
             <RowDefinition Height="5*"/>
             <RowDefinition Height="5*"/>
             <RowDefinition Height="5*"/>
@@ -21,10 +21,21 @@
             <ColumnDefinition Width="1220*"/>
             <ColumnDefinition Width="260*"/>
         </Grid.ColumnDefinitions>
-        <oxy:Plot Grid.Column="0" Grid.Row="0" Title="Битовая последовательность"
+        <oxy:Plot Grid.Column="0" Grid.Row="0" Title="Исходная последовательность"
                   InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}">
             <oxy:Plot.Series>
-                <oxy:StairStepSeries ItemsSource="{Binding PointsBinary}" 
+                <oxy:StairStepSeries ItemsSource="{Binding PointsSourceBinary}" 
+                                Color="Navy" 
+                                MarkerType="Circle" 
+                                MarkerFill="Transparent" 
+                                MarkerSize="3"
+                                />
+            </oxy:Plot.Series>
+        </oxy:Plot>
+        <oxy:Plot Grid.Column="0" Grid.Row="1" Title="Случайная последовательность"
+                  InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}">
+            <oxy:Plot.Series>
+                <oxy:StairStepSeries ItemsSource="{Binding PointsRandomBinary}" 
                                 Color="Navy" 
                                 MarkerType="Circle" 
                                 MarkerFill="Transparent" 
@@ -34,12 +45,15 @@
         </oxy:Plot>
         <StackPanel Grid.Column="1" 
                     Grid.Row="0"
+                    Grid.RowSpan="2"
                     Orientation="Vertical" 
                     HorizontalAlignment="Stretch" 
                     VerticalAlignment="Center"
-                    Margin="5,12,5,13" Height="228">
+                    Margin="5,12,5,13">
             <Grid Margin="2">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
                     <RowDefinition Height="5*"/>
                     <RowDefinition Height="5*"/>
                     <RowDefinition Height="5*"/>
@@ -72,17 +86,22 @@
                 <TextBox HorizontalAlignment="Stretch" 
                          VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="3"
                          Text="{Binding FrequencyCarry, UpdateSourceTrigger=LostFocus}"/>
-                <Button Content="Битовая последовательность" HorizontalAlignment="Stretch" Margin="5" Grid.Row="4" Grid.ColumnSpan="2" Command="{Binding GenerateBits}"/>
-                <Button Content="Амплитудная модуляция" HorizontalAlignment="Stretch" Grid.Row="5" Margin="5" Grid.ColumnSpan="2" Command="{Binding GenerateASK}"/>
-                <Button Content="Частотная модуляция" HorizontalAlignment="Stretch" Grid.Row="6" Margin="5" Grid.ColumnSpan="2" Command="{Binding GenerateFSK}"/>
-                <Button Content="Фазовая модуляция" HorizontalAlignment="Stretch" Grid.Row="7" Margin="5" Grid.ColumnSpan="2" Command="{Binding GeneratePSK}"/>
+                <Label HorizontalAlignment="Center" Content="Задержка сигнала" Grid.Column="0" Grid.Row="4"/>
+                <TextBox HorizontalAlignment="Stretch" 
+                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="4"
+                         Text="{Binding FrequencyCarry, UpdateSourceTrigger=LostFocus}"/>
+                <Button Content="Исходная последовательность" HorizontalAlignment="Stretch" Grid.Row="5" Margin="5" Grid.ColumnSpan="2" Command="{Binding GenerateBits}"/>
+                <Button Content="Случайная последовательность" HorizontalAlignment="Stretch" Grid.Row="6" Margin="5" Grid.ColumnSpan="2" Command="{Binding GenerateRandomBits}"/>
+                <Button Content="Амплитудная модуляция" HorizontalAlignment="Stretch" Grid.Row="7" Margin="5" Grid.ColumnSpan="2" Command="{Binding GenerateASK}"/>
+                <Button Content="Частотная модуляция" HorizontalAlignment="Stretch" Grid.Row="8" Margin="5" Grid.ColumnSpan="2" Command="{Binding GenerateFSK}"/>
+                <Button Content="Фазовая модуляция" HorizontalAlignment="Stretch" Grid.Row="9" Margin="5" Grid.ColumnSpan="2" Command="{Binding GeneratePSK}"/>
             </Grid>
             <!--<Button Content="Сигнал" Margin="5" Command="{Binding GenerateSignal}"/>-->
         </StackPanel>
-        <oxy:Plot Grid.Column="0" Grid.Row="1" Title="Амплитудная модуляция" 
+        <oxy:Plot Grid.Column="0" Grid.Row="2" Title="Опорный сигнал" 
                   InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2">
             <oxy:Plot.Series>
-                <oxy:LineSeries ItemsSource="{Binding PointsASK}" 
+                <oxy:LineSeries ItemsSource="{Binding PointsMainSignal}" 
                                 Color="Crimson"
                                 MarkerType="Circle" 
                                 MarkerFill="Transparent" 
@@ -90,22 +109,11 @@
                                 />
             </oxy:Plot.Series>
         </oxy:Plot>
-        <oxy:Plot Grid.Column="0" Grid.Row="2" Title="Частотная модуляция" 
+        <oxy:Plot Grid.Column="0" Grid.Row="3" Title="Исследуемый сигнал" 
                   InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2">
             <oxy:Plot.Series>
-                <oxy:LineSeries ItemsSource="{Binding PointsFSK}" 
-                                Color="Green" 
-                                MarkerType="Circle" 
-                                MarkerFill="Transparent" 
-                                MarkerSize="3"
-                                />
-            </oxy:Plot.Series>
-        </oxy:Plot>
-        <oxy:Plot Grid.Column="0" Grid.Row="3" Title="Фазовая модуляция" 
-                  InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2">
-            <oxy:Plot.Series>
-                <oxy:LineSeries ItemsSource="{Binding PointsPSK}" 
-                                Color="DarkGoldenrod"
+                <oxy:LineSeries ItemsSource="{Binding PointsResearchSignal}" 
+                                Color="Green"
                                 MarkerType="Circle" 
                                 MarkerFill="Transparent" 
                                 MarkerSize="3"
