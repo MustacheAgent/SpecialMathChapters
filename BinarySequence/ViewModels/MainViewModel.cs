@@ -8,6 +8,13 @@ using System.Windows.Input;
 
 namespace BinarySequence
 {
+    public enum ModulationType
+    {
+        Amplitude,
+        Frequency,
+        Phase
+    }
+
     public class MainViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -85,15 +92,15 @@ namespace BinarySequence
 
         public ICommand GenerateBits { get; set; }
         public ICommand GenerateRandomBits { get; set; }
-        public ICommand GenerateASK { get; set; }
-        public ICommand GenerateFSK { get; set; }
-        public ICommand GeneratePSK { get; set; }
+        public ICommand GenerateModulation { get; set; }
         public ICommand Correlation { get; set; }
 
         public List<DataPoint> PointsSourceBinary { get; set; }
         public List<DataPoint> PointsRandomBinary { get; set; }
         public List<DataPoint> PointsMainSignal { get; set; }
         public List<DataPoint> PointsResearchSignal { get; set; }
+
+        public ModulationType Modulation { get; set; }
 
         Random random;
 
@@ -103,6 +110,8 @@ namespace BinarySequence
             PointsRandomBinary = new List<DataPoint>();
             PointsMainSignal = new List<DataPoint>();
             PointsResearchSignal = new List<DataPoint>();
+
+            Modulation = ModulationType.Amplitude;
 
             random = new Random();
 
@@ -125,26 +134,23 @@ namespace BinarySequence
                 Invalidate++;
             });
 
-            GenerateASK = new RelayCommand(o =>
+            GenerateModulation = new RelayCommand(o =>
             {
-                AmplitudeShiftKeying(PointsSourceBinary, PointsMainSignal);
-                AmplitudeShiftKeying(PointsRandomBinary, PointsResearchSignal);
-                InsertSequence(PointsResearchSignal, PointsMainSignal);
-                Invalidate++;
-            });
-
-            GenerateFSK = new RelayCommand(o =>
-            {
-                FrequencyShiftKeying(PointsSourceBinary, PointsMainSignal);
-                FrequencyShiftKeying(PointsRandomBinary, PointsResearchSignal);
-                InsertSequence(PointsResearchSignal, PointsMainSignal);
-                Invalidate++;
-            });
-
-            GeneratePSK = new RelayCommand(o =>
-            {
-                PhaseShiftKeying(PointsSourceBinary, PointsMainSignal);
-                PhaseShiftKeying(PointsRandomBinary, PointsResearchSignal);
+                switch(Modulation)
+                {
+                    case ModulationType.Amplitude:
+                        AmplitudeShiftKeying(PointsSourceBinary, PointsMainSignal);
+                        AmplitudeShiftKeying(PointsRandomBinary, PointsResearchSignal);
+                        break;
+                    case ModulationType.Frequency:
+                        FrequencyShiftKeying(PointsSourceBinary, PointsMainSignal);
+                        FrequencyShiftKeying(PointsRandomBinary, PointsResearchSignal);
+                        break;
+                    case ModulationType.Phase:
+                        PhaseShiftKeying(PointsSourceBinary, PointsMainSignal);
+                        PhaseShiftKeying(PointsRandomBinary, PointsResearchSignal);
+                        break;
+                }
                 InsertSequence(PointsResearchSignal, PointsMainSignal);
                 Invalidate++;
             });

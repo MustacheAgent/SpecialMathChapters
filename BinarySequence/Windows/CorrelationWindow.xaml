@@ -8,9 +8,9 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         mc:Ignorable="d"
         Title="Корреляция сигнала" Height="450" Width="800">
-    <Window.DataContext>
+    <!--<Window.DataContext>
         <vm:CorrelationViewModel/>
-    </Window.DataContext>
+    </Window.DataContext>-->
     <Grid>
         <oxy:Plot Title="Корреляция двух сигналов"
                   InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}">

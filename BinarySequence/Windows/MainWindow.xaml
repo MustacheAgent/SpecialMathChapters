@@ -50,6 +50,9 @@
                     HorizontalAlignment="Stretch" 
                     VerticalAlignment="Center"
                     Margin="5,12,5,13">
+            <StackPanel.Resources>
+                <local:ComparisonConverter x:Key="Converter"/>
+            </StackPanel.Resources>
             <Grid Margin="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="5*"/>
@@ -58,7 +61,7 @@
                     <RowDefinition Height="5*"/>
                     <RowDefinition Height="5*"/>
                     <RowDefinition Height="5*"/>
-                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="9*"/>
                     <RowDefinition Height="5*"/>
                     <RowDefinition Height="5*"/>
                     <RowDefinition Height="5*"/>
@@ -66,37 +69,39 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5*"/>
-                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="4*"/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Row="0" Grid.Column="0"
+                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
                        HorizontalAlignment="Center" 
                        Content="Количество бит"/>
-                <TextBox Grid.Row="0" Grid.Column="1"
+                <TextBox Grid.Row="0" Grid.Column="2"
                          HorizontalAlignment="Stretch" 
                          VerticalContentAlignment="Center" 
                          Text="{Binding BitAmount, UpdateSourceTrigger=LostFocus}"/>
-                <Label HorizontalAlignment="Center" Content="Частота дискретизации, кГц" Grid.Column="0" Grid.Row="1"/>
+                <Label HorizontalAlignment="Center" Content="Частота дискретизации, кГц" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
                 <TextBox HorizontalAlignment="Stretch" 
-                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1"
+                         VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="1"
                          Text="{Binding FrequencyDiscr, UpdateSourceTrigger=LostFocus}"/>
-                <Label HorizontalAlignment="Center" Content="Битрейт" Grid.Column="0" Grid.Row="2"/>
+                <Label HorizontalAlignment="Center" Content="Битрейт" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"/>
                 <TextBox HorizontalAlignment="Stretch" 
-                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="2"
+                         VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="2"
                          Text="{Binding Bitrate, UpdateSourceTrigger=LostFocus}"/>
-                <Label HorizontalAlignment="Center" Content="Несущая частота, кГц" Grid.Column="0" Grid.Row="3"/>
+                <Label HorizontalAlignment="Center" Content="Несущая частота, кГц" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2"/>
                 <TextBox HorizontalAlignment="Stretch" 
-                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="3"
+                         VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="3"
                          Text="{Binding FrequencyCarry, UpdateSourceTrigger=LostFocus}"/>
-                <Label HorizontalAlignment="Center" Content="Задержка сигнала" Grid.Column="0" Grid.Row="4"/>
+                <Label HorizontalAlignment="Center" Content="Задержка сигнала" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2"/>
                 <TextBox HorizontalAlignment="Stretch" 
-                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="4"
+                         VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="4"
                          Text="{Binding Tau, UpdateSourceTrigger=LostFocus}"/>
-                <Button Content="Исходная последовательность" HorizontalAlignment="Stretch" Grid.Row="5" Margin="5" Grid.ColumnSpan="2" Command="{Binding GenerateBits}"/>
-                <Button Content="Случайная последовательность" HorizontalAlignment="Stretch" Grid.Row="6" Margin="5" Grid.ColumnSpan="2" Command="{Binding GenerateRandomBits}"/>
-                <Button Content="Амплитудная модуляция" HorizontalAlignment="Stretch" Grid.Row="7" Margin="5" Grid.ColumnSpan="2" Command="{Binding GenerateASK}"/>
-                <Button Content="Частотная модуляция" HorizontalAlignment="Stretch" Grid.Row="8" Margin="5" Grid.ColumnSpan="2" Command="{Binding GenerateFSK}"/>
-                <Button Content="Фазовая модуляция" HorizontalAlignment="Stretch" Grid.Row="9" Margin="5" Grid.ColumnSpan="2" Command="{Binding GeneratePSK}"/>
-                <Button Content="Корреляция" HorizontalAlignment="Stretch" Grid.Row="10" Margin="5" Grid.ColumnSpan="2" Command="{Binding GeneratePSK}"/>
+                <Button Content="Исходная последовательность" HorizontalAlignment="Stretch" Grid.Row="5" Margin="5" Grid.ColumnSpan="3" Command="{Binding GenerateBits}"/>
+                <Button Content="Случайная последовательность" HorizontalAlignment="Stretch" Grid.Row="6" Margin="5" Grid.ColumnSpan="3" Command="{Binding GenerateRandomBits}"/>
+                <RadioButton Content="Амплитудная" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="{Binding Path=Modulation, Converter={StaticResource Converter}, ConverterParameter={x:Static local:ModulationType.Amplitude}}"/>
+                <RadioButton Content="Частотная" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="{Binding Path=Modulation, Converter={StaticResource Converter}, ConverterParameter={x:Static local:ModulationType.Frequency}}"/>
+                <RadioButton Content="Фазовая" Grid.Row="7" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="{Binding Path=Modulation, Converter={StaticResource Converter}, ConverterParameter={x:Static local:ModulationType.Phase}}"/>
+                <Button Content="Модуляция" HorizontalAlignment="Stretch" Grid.Row="8" Margin="5" Grid.ColumnSpan="3" Command="{Binding GenerateModulation}"/>
+                <Button Content="Корреляция" HorizontalAlignment="Stretch" Grid.Row="9" Margin="5" Grid.ColumnSpan="3" Command="{Binding Correlation}"/>
             </Grid>
             <!--<Button Content="Сигнал" Margin="5" Command="{Binding GenerateSignal}"/>-->
         </StackPanel>
