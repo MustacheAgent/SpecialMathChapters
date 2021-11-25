@@ -88,6 +88,7 @@ namespace BinarySequence
         public ICommand GenerateASK { get; set; }
         public ICommand GenerateFSK { get; set; }
         public ICommand GeneratePSK { get; set; }
+        public ICommand Correlation { get; set; }
 
         public List<DataPoint> PointsSourceBinary { get; set; }
         public List<DataPoint> PointsRandomBinary { get; set; }

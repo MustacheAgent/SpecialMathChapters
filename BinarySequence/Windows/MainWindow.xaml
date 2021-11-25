@@ -62,6 +62,7 @@
                     <RowDefinition Height="5*"/>
                     <RowDefinition Height="5*"/>
                     <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5*"/>
@@ -95,6 +96,7 @@
                 <Button Content="Амплитудная модуляция" HorizontalAlignment="Stretch" Grid.Row="7" Margin="5" Grid.ColumnSpan="2" Command="{Binding GenerateASK}"/>
                 <Button Content="Частотная модуляция" HorizontalAlignment="Stretch" Grid.Row="8" Margin="5" Grid.ColumnSpan="2" Command="{Binding GenerateFSK}"/>
                 <Button Content="Фазовая модуляция" HorizontalAlignment="Stretch" Grid.Row="9" Margin="5" Grid.ColumnSpan="2" Command="{Binding GeneratePSK}"/>
+                <Button Content="Корреляция" HorizontalAlignment="Stretch" Grid.Row="10" Margin="5" Grid.ColumnSpan="2" Command="{Binding GeneratePSK}"/>
             </Grid>
             <!--<Button Content="Сигнал" Margin="5" Command="{Binding GenerateSignal}"/>-->
         </StackPanel>
