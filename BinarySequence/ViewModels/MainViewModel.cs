@@ -154,6 +154,16 @@ namespace BinarySequence
                 InsertSequence(PointsResearchSignal, PointsMainSignal);
                 Invalidate++;
             });
+
+            Correlation = new RelayCommand(o =>
+            {
+                CorrelationWindow window = new CorrelationWindow
+                {
+                    DataContext = new ViewModels.CorrelationViewModel(PointsMainSignal, PointsResearchSignal)
+                };
+
+                window.ShowDialog();
+            });
         }
 
         private void GenerateBinary(List<DataPoint> points, int size)
