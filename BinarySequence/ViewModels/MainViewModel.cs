@@ -91,7 +91,6 @@ namespace BinarySequence
         #endregion 
 
         public ICommand GenerateBits { get; set; }
-        public ICommand GenerateRandomBits { get; set; }
         public ICommand GenerateModulation { get; set; }
         public ICommand Correlation { get; set; }
 
@@ -125,11 +124,6 @@ namespace BinarySequence
             GenerateBits = new RelayCommand(o =>
             {
                 GenerateBinary(PointsSourceBinary, BitAmount);
-                Invalidate++;
-            });
-
-            GenerateRandomBits = new RelayCommand(o =>
-            {
                 GenerateBinary(PointsRandomBinary, BitAmount * 2);
                 Invalidate++;
             });
