@@ -27,6 +27,6 @@
                                 />
             </oxy:Plot.Series>
         </oxy:Plot>
-        <Label Grid.Row="1" Margin="5" Content="{Binding FoundTau, UpdateSourceTrigger=PropertyChanged}"/>
+        <Label Grid.Row="1" Margin="5" Content="{Binding FoundTau, UpdateSourceTrigger=PropertyChanged}" ContentStringFormat="Корреляция: {0}"/>
     </Grid>
 </Window>
