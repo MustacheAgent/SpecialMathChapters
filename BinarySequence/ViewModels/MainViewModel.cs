@@ -31,6 +31,7 @@ namespace BinarySequence
         private int _invalidate;
         private int _bitrate;
         private int _tau;
+        private int _signalNoise;
         #endregion
 
         #region свойства 
@@ -88,6 +89,15 @@ namespace BinarySequence
                 OnPropertyChanged();
             }
         }
+        public int SignalNoise
+        {
+            get => _signalNoise;
+            set
+            {
+                _signalNoise = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion 
 
         public ICommand GenerateBits { get; set; }
@@ -120,6 +130,7 @@ namespace BinarySequence
             FrequencyDiscr = 250;
             FrequencyCarry = 1;
             Tau = 1000;
+            SignalNoise = 10;
 
             GenerateBits = new RelayCommand(o =>
             {
@@ -146,6 +157,7 @@ namespace BinarySequence
                         break;
                 }
                 InsertSequence(PointsResearchSignal, PointsMainSignal);
+                AddNoise(PointsResearchSignal, SignalNoise);
                 Invalidate++;
             });
 
@@ -243,6 +255,32 @@ namespace BinarySequence
             for (int i = 0; i < inserted.Count; i++)
             {
                 main[i + Tau] = new DataPoint(main[i + Tau].X, inserted[i].Y);
+            }
+        }
+
+        private void AddNoise(List<DataPoint> signal, int signalNoise)
+        {
+            double[] noise = new double[signal.Count];
+            int coefficient = 12;
+            double energyS = 0, energyN = 0;
+
+            for (int i = 0; i < noise.Length; i++)
+            {
+                for (int k = 0; k < coefficient; k++)
+                {
+                    noise[i] += random.Next(-100, 101);
+                }
+                noise[i] /= coefficient * 100;
+
+                energyS += Math.Pow(signal[i].Y, 2);
+                energyN += Math.Pow(noise[i], 2);
+            }
+
+            double noiseCoef = Math.Sqrt(energyS / energyN * Math.Pow(10, -signalNoise / 10));
+
+            for (int i = 0; i < signal.Count; i++)
+            {
+                signal[i] = new DataPoint(i, signal[i].Y + (noiseCoef * noise[i]));
             }
         }
     }

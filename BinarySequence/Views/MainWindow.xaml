@@ -95,7 +95,11 @@
                 <TextBox HorizontalAlignment="Stretch" 
                          VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="4"
                          Text="{Binding Tau, UpdateSourceTrigger=LostFocus}"/>
-                <Button Content="Битовая последовательность" HorizontalAlignment="Stretch" Grid.Row="5" Margin="5" Grid.ColumnSpan="3" Command="{Binding GenerateBits}"/>
+                <Label HorizontalAlignment="Center" Content="Соотношение сигнал/шум" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2"/>
+                <TextBox HorizontalAlignment="Stretch" 
+                         VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="5"
+                         Text="{Binding SignalNoise, UpdateSourceTrigger=LostFocus}"/>
+                <Button Content="Битовая последовательность" HorizontalAlignment="Stretch" Grid.Row="6" Margin="5" Grid.ColumnSpan="3" Command="{Binding GenerateBits}"/>
                 <!--<Button Content="Случайная последовательность" HorizontalAlignment="Stretch" Grid.Row="6" Margin="5" Grid.ColumnSpan="3" Command="{Binding GenerateRandomBits}"/>-->
                 <RadioButton Content="Амплитудная" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="{Binding Path=Modulation, Converter={StaticResource Converter}, ConverterParameter={x:Static local:ModulationType.Amplitude}}"/>
                 <RadioButton Content="Частотная" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="{Binding Path=Modulation, Converter={StaticResource Converter}, ConverterParameter={x:Static local:ModulationType.Frequency}}"/>
