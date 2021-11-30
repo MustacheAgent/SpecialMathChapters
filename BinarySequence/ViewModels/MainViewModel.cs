@@ -156,8 +156,8 @@ namespace BinarySequence
             Invalidate = 0;
             BitAmount = 16;
             Bitrate = 2;
-            FrequencyDiscr = 150;
-            FrequencyCarry = 1;
+            FrequencyDiscr = 250;
+            FrequencyCarry = 3;
             Tau = 500;
             SignalNoise = 10;
             NoiseSignalStep = 4;
@@ -166,6 +166,8 @@ namespace BinarySequence
             Research = new RelayCommand(o =>
             {
                 ResearchCorrelation(ASK, ModulationType.Amplitude);
+                ResearchCorrelation(FSK, ModulationType.Frequency);
+                ResearchCorrelation(PSK, ModulationType.Phase);
             });
 
             GenerateModulation = new RelayCommand(o =>
@@ -212,7 +214,9 @@ namespace BinarySequence
             int noise = SignalNoise;
             List<int> correlations = new List<int>();
             List<DataPoint> corr = new List<DataPoint>();
-            int interval = _freqDiscr / _bitrate;
+            double timeInterval = 1000d / _bitrate;
+            double timePoint = timeInterval / (_freqDiscr / _bitrate);
+            double time = Tau * timePoint;
 
             int steps = (10 - (-10)) / NoiseSignalStep;
 
@@ -245,7 +249,7 @@ namespace BinarySequence
                     correlations.Add(Calculation.Correlation(PointsMainSignal, PointsResearchSignal, corr));
                 }
 
-                points.Add(new DataPoint(noise, correlations.FindAll(t => t > Tau - interval / 2 && t < Tau + interval / 2).Count));
+                points.Add(new DataPoint(noise, correlations.FindAll(t => t > time - timeInterval / 2 && t < time + timeInterval / 2).Count / Repeat));
                 noise -= NoiseSignalStep;
                 correlations.Clear();
                 corr.Clear();

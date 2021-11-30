@@ -23,15 +23,17 @@ namespace BinarySequence
             int p = freqDiscr / bitrate;
             int size = p * binary.Count;
             int k = 0;
+            double delta = 0.5;
+
             for (int i = 0; i < size; i++)
             {
                 if (binary[k].Y == 0)
                 {
-                    modulation.Add(ASK.Generate(i, freqCarry, freqDiscr, 0.25));
+                    modulation.Add(ASK.Generate(i, freqCarry, freqDiscr, 1 - delta));
                 }
                 else
                 {
-                    modulation.Add(ASK.Generate(i, freqCarry, freqDiscr, 1));
+                    modulation.Add(ASK.Generate(i, freqCarry, freqDiscr, 1 + delta));
                 }
                 if ((i % p == 0) && (i != 0))
                 {
