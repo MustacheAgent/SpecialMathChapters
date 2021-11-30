@@ -134,8 +134,8 @@ namespace BinarySequence
 
             GenerateBits = new RelayCommand(o =>
             {
-                GenerateBinary(PointsSourceBinary, BitAmount);
-                GenerateBinary(PointsRandomBinary, BitAmount * 2);
+                Calculation.GenerateBinary(PointsSourceBinary, BitAmount, random);
+                Calculation.GenerateBinary(PointsRandomBinary, BitAmount * 2, random);
                 Invalidate++;
             });
 
@@ -144,20 +144,20 @@ namespace BinarySequence
                 switch(Modulation)
                 {
                     case ModulationType.Amplitude:
-                        AmplitudeShiftKeying(PointsSourceBinary, PointsMainSignal);
-                        AmplitudeShiftKeying(PointsRandomBinary, PointsResearchSignal);
+                        Calculation.AmplitudeShiftKeying(PointsSourceBinary, PointsMainSignal, _freqDiscr, _bitrate, _freqCarry);
+                        Calculation.AmplitudeShiftKeying(PointsRandomBinary, PointsResearchSignal, _freqDiscr, _bitrate, _freqCarry);
                         break;
                     case ModulationType.Frequency:
-                        FrequencyShiftKeying(PointsSourceBinary, PointsMainSignal);
-                        FrequencyShiftKeying(PointsRandomBinary, PointsResearchSignal);
+                        Calculation.FrequencyShiftKeying(PointsSourceBinary, PointsMainSignal, _freqDiscr, _bitrate, _freqCarry);
+                        Calculation.FrequencyShiftKeying(PointsRandomBinary, PointsResearchSignal, _freqDiscr, _bitrate, _freqCarry);
                         break;
                     case ModulationType.Phase:
-                        PhaseShiftKeying(PointsSourceBinary, PointsMainSignal);
-                        PhaseShiftKeying(PointsRandomBinary, PointsResearchSignal);
+                        Calculation.PhaseShiftKeying(PointsSourceBinary, PointsMainSignal, _freqDiscr, _bitrate, _freqCarry);
+                        Calculation.PhaseShiftKeying(PointsRandomBinary, PointsResearchSignal, _freqDiscr, _bitrate, _freqCarry);
                         break;
                 }
-                InsertSequence(PointsResearchSignal, PointsMainSignal);
-                AddNoise(PointsResearchSignal, SignalNoise);
+                Calculation.InsertSequence(PointsResearchSignal, PointsMainSignal, Tau);
+                Calculation.AddNoise(PointsResearchSignal, SignalNoise, random);
                 Invalidate++;
             });
 
@@ -170,118 +170,6 @@ namespace BinarySequence
 
                 window.ShowDialog();
             });
-        }
-
-        private void GenerateBinary(List<DataPoint> points, int size)
-        {
-            points.Clear();
-            for (int i = 0; i < size; i++)
-            {
-                points.Add(new DataPoint(i, random.Next(2)));
-            }
-        }
-
-        private void AmplitudeShiftKeying(List<DataPoint> main, List<DataPoint> modulated)
-        {
-            modulated.Clear();
-            int p = _freqDiscr / _bitrate;
-            int size = p * main.Count;
-            int k = 0;
-            for (int i = 0; i < size; i++)
-            {
-                if (main[k].Y == 0)
-                {
-                    modulated.Add(ASK.Generate(i, _freqCarry, _freqDiscr, 0.5));
-                }
-                else
-                {
-                    modulated.Add(ASK.Generate(i, _freqCarry, _freqDiscr, 1));
-                }
-                if ((i % p == 0) && (i != 0))
-                {
-                    k++;
-                }
-            }
-        }
-
-        private void FrequencyShiftKeying(List<DataPoint> main, List<DataPoint> modulated)
-        {
-            modulated.Clear();
-            int p = _freqDiscr / _bitrate;
-            int size = p * main.Count;
-            int k = 0;
-            for (int i = 0; i < size; i++)
-            {
-                if (main[k].Y == 0)
-                {
-                    modulated.Add(FSK.Generate(i, _freqCarry, _freqDiscr, 0));
-                }
-                else
-                {
-                    modulated.Add(FSK.Generate(i, _freqCarry, _freqDiscr, 2 * _freqCarry));
-                }
-                if ((i % p == 0) && (i != 0))
-                {
-                    k++;
-                }
-            }
-        }
-
-        private void PhaseShiftKeying(List<DataPoint> main, List<DataPoint> modulated)
-        {
-            modulated.Clear();
-            int p = _freqDiscr / _bitrate;
-            int size = p * main.Count;
-            int k = 0;
-            for (int i = 0; i < size; i++)
-            {
-                if (main[k].Y == 0)
-                {
-                    modulated.Add(PSK.Generate(i, _freqCarry, _freqDiscr, -1));
-                }
-                else
-                {
-                    modulated.Add(PSK.Generate(i, _freqCarry, _freqDiscr, 1));
-                }
-                if ((i % p == 0) && (i != 0))
-                {
-                    k++;
-                }
-            }
-        }
-
-        private void InsertSequence(List<DataPoint> main, List<DataPoint> inserted)
-        {
-            for (int i = 0; i < inserted.Count; i++)
-            {
-                main[i + Tau] = new DataPoint(main[i + Tau].X, inserted[i].Y);
-            }
-        }
-
-        private void AddNoise(List<DataPoint> signal, int signalNoise)
-        {
-            double[] noise = new double[signal.Count];
-            int coefficient = 12;
-            double energyS = 0, energyN = 0;
-
-            for (int i = 0; i < noise.Length; i++)
-            {
-                for (int k = 0; k < coefficient; k++)
-                {
-                    noise[i] += random.Next(-100, 101);
-                }
-                noise[i] /= coefficient * 100;
-
-                energyS += Math.Pow(signal[i].Y, 2);
-                energyN += Math.Pow(noise[i], 2);
-            }
-
-            double noiseCoef = Math.Sqrt(energyS / energyN * Math.Pow(10, -signalNoise / 10));
-
-            for (int i = 0; i < signal.Count; i++)
-            {
-                signal[i] = new DataPoint(i, signal[i].Y + (noiseCoef * noise[i]));
-            }
         }
     }
 }

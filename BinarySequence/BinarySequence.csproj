@@ -69,6 +69,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Calculation.cs" />
     <Compile Include="ComparisonConverter.cs" />
     <Compile Include="ViewModels\CorrelationViewModel.cs" />
     <Compile Include="Views\CorrelationWindow.xaml.cs">
