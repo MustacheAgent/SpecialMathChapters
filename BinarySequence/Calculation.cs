@@ -2,6 +2,7 @@
 using OxyPlot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BinarySequence
 {
@@ -16,21 +17,21 @@ namespace BinarySequence
             }
         }
 
-        public static void AmplitudeShiftKeying(List<DataPoint> main, List<DataPoint> modulated, int freqDiscr, int bitrate, int freqCarry)
+        public static void AmplitudeShiftKeying(List<DataPoint> binary, List<DataPoint> modulation, int freqDiscr, int bitrate, int freqCarry)
         {
-            modulated.Clear();
+            modulation.Clear();
             int p = freqDiscr / bitrate;
-            int size = p * main.Count;
+            int size = p * binary.Count;
             int k = 0;
             for (int i = 0; i < size; i++)
             {
-                if (main[k].Y == 0)
+                if (binary[k].Y == 0)
                 {
-                    modulated.Add(ASK.Generate(i, freqCarry, freqDiscr, 0.25));
+                    modulation.Add(ASK.Generate(i, freqCarry, freqDiscr, 0.25));
                 }
                 else
                 {
-                    modulated.Add(ASK.Generate(i, freqCarry, freqDiscr, 1));
+                    modulation.Add(ASK.Generate(i, freqCarry, freqDiscr, 1));
                 }
                 if ((i % p == 0) && (i != 0))
                 {
@@ -39,21 +40,21 @@ namespace BinarySequence
             }
         }
 
-        public static void FrequencyShiftKeying(List<DataPoint> main, List<DataPoint> modulated, int freqDiscr, int bitrate, int freqCarry)
+        public static void FrequencyShiftKeying(List<DataPoint> binary, List<DataPoint> modulation, int freqDiscr, int bitrate, int freqCarry)
         {
-            modulated.Clear();
+            modulation.Clear();
             int p = freqDiscr / bitrate;
-            int size = p * main.Count;
+            int size = p * binary.Count;
             int k = 0;
             for (int i = 0; i < size; i++)
             {
-                if (main[k].Y == 0)
+                if (binary[k].Y == 0)
                 {
-                    modulated.Add(FSK.Generate(i, freqCarry, freqDiscr, 0));
+                    modulation.Add(FSK.Generate(i, freqCarry, freqDiscr, 0));
                 }
                 else
                 {
-                    modulated.Add(FSK.Generate(i, freqCarry, freqDiscr, 2 * freqCarry));
+                    modulation.Add(FSK.Generate(i, freqCarry, freqDiscr, 2 * freqCarry));
                 }
                 if ((i % p == 0) && (i != 0))
                 {
@@ -62,21 +63,21 @@ namespace BinarySequence
             }
         }
 
-        public static void PhaseShiftKeying(List<DataPoint> main, List<DataPoint> modulated, int freqDiscr, int bitrate, int freqCarry)
+        public static void PhaseShiftKeying(List<DataPoint> binary, List<DataPoint> modulation, int freqDiscr, int bitrate, int freqCarry)
         {
-            modulated.Clear();
+            modulation.Clear();
             int p = freqDiscr / bitrate;
-            int size = p * main.Count;
+            int size = p * binary.Count;
             int k = 0;
             for (int i = 0; i < size; i++)
             {
-                if (main[k].Y == 0)
+                if (binary[k].Y == 0)
                 {
-                    modulated.Add(PSK.Generate(i, freqCarry, freqDiscr, -1));
+                    modulation.Add(PSK.Generate(i, freqCarry, freqDiscr, -1));
                 }
                 else
                 {
-                    modulated.Add(PSK.Generate(i, freqCarry, freqDiscr, 1));
+                    modulation.Add(PSK.Generate(i, freqCarry, freqDiscr, 1));
                 }
                 if ((i % p == 0) && (i != 0))
                 {
@@ -117,6 +118,22 @@ namespace BinarySequence
             {
                 signal[i] = new DataPoint(i, signal[i].Y + (noiseCoef * noise[i]));
             }
+        }
+
+        public static int Correlation(List<DataPoint> main, List<DataPoint> research, List<DataPoint> correlation)
+        {
+            double correlationCoef = 0;
+            for (int i = 0; i < research.Count - main.Count; i++)
+            {
+                for (int k = 0; k < main.Count; k++)
+                {
+                    correlationCoef += main[k].Y * research[i + k].Y;
+                }
+                correlation.Add(new DataPoint(i, correlationCoef / main.Count));
+                correlationCoef = 0;
+            }
+
+            return (int)correlation.First(x => x.Y == correlation.Max(t => t.Y)).X;
         }
     }
 }

@@ -17,9 +17,9 @@ namespace BinarySequence
     /// <summary>
     /// Interaction logic for CorrelationWindow.xaml
     /// </summary>
-    public partial class CorrelationWindow : Window
+    public partial class CorrelationView : Window
     {
-        public CorrelationWindow()
+        public CorrelationView()
         {
             InitializeComponent();
         }

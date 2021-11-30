@@ -72,19 +72,19 @@
     <Compile Include="Calculation.cs" />
     <Compile Include="ComparisonConverter.cs" />
     <Compile Include="ViewModels\CorrelationViewModel.cs" />
-    <Compile Include="Views\CorrelationWindow.xaml.cs">
-      <DependentUpon>CorrelationWindow.xaml</DependentUpon>
+    <Compile Include="Views\CorrelationView.xaml.cs">
+      <DependentUpon>CorrelationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ModulationTypes\ASK.cs" />
     <Compile Include="ModulationTypes\FSK.cs" />
     <Compile Include="ModulationTypes\PSK.cs" />
     <Compile Include="SignalCarrier.cs" />
     <Compile Include="RelayCommand.cs" />
-    <Page Include="Views\CorrelationWindow.xaml">
+    <Page Include="Views\CorrelationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MainWindow.xaml">
+    <Page Include="Views\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -93,8 +93,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="Views\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="Views\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

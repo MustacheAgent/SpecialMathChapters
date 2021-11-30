@@ -1,10 +1,10 @@
-﻿using BinarySequence.ModulationTypes;
-using OxyPlot;
+﻿using OxyPlot;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using System.Linq;
 
 namespace BinarySequence
 {
@@ -32,6 +32,8 @@ namespace BinarySequence
         private int _bitrate;
         private int _tau;
         private int _signalNoise;
+        private int _repeat;
+        private int _noiseSignalStep;
         #endregion
 
         #region свойства 
@@ -98,16 +100,39 @@ namespace BinarySequence
                 OnPropertyChanged();
             }
         }
+        public int Repeat
+        {
+            get => _repeat;
+            set
+            {
+                _repeat = value;
+                OnPropertyChanged();
+            }
+        }
+        public int NoiseSignalStep
+        {
+            get => _noiseSignalStep;
+            set
+            {
+                _noiseSignalStep = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion 
 
         public ICommand GenerateBits { get; set; }
         public ICommand GenerateModulation { get; set; }
         public ICommand Correlation { get; set; }
+        public ICommand Research { get; set; }
 
         public List<DataPoint> PointsSourceBinary { get; set; }
         public List<DataPoint> PointsRandomBinary { get; set; }
         public List<DataPoint> PointsMainSignal { get; set; }
         public List<DataPoint> PointsResearchSignal { get; set; }
+
+        public List<DataPoint> ASK { get; set; }
+        public List<DataPoint> FSK { get; set; }
+        public List<DataPoint> PSK { get; set; }
 
         public ModulationType Modulation { get; set; }
 
@@ -120,28 +145,35 @@ namespace BinarySequence
             PointsMainSignal = new List<DataPoint>();
             PointsResearchSignal = new List<DataPoint>();
 
+            ASK = new List<DataPoint>();
+            FSK = new List<DataPoint>();
+            PSK = new List<DataPoint>();
+
             Modulation = ModulationType.Amplitude;
 
             random = new Random();
 
             Invalidate = 0;
-            BitAmount = 32;
+            BitAmount = 16;
             Bitrate = 2;
-            FrequencyDiscr = 250;
+            FrequencyDiscr = 150;
             FrequencyCarry = 1;
-            Tau = 1000;
+            Tau = 500;
             SignalNoise = 10;
+            NoiseSignalStep = 4;
+            Repeat = 10;
 
-            GenerateBits = new RelayCommand(o =>
+            Research = new RelayCommand(o =>
             {
-                Calculation.GenerateBinary(PointsSourceBinary, BitAmount, random);
-                Calculation.GenerateBinary(PointsRandomBinary, BitAmount * 2, random);
-                Invalidate++;
+                ResearchCorrelation(ASK, ModulationType.Amplitude);
             });
 
             GenerateModulation = new RelayCommand(o =>
             {
-                switch(Modulation)
+                Calculation.GenerateBinary(PointsSourceBinary, BitAmount, random);
+                Calculation.GenerateBinary(PointsRandomBinary, BitAmount * 2, random);
+
+                switch (Modulation)
                 {
                     case ModulationType.Amplitude:
                         Calculation.AmplitudeShiftKeying(PointsSourceBinary, PointsMainSignal, _freqDiscr, _bitrate, _freqCarry);
@@ -155,6 +187,8 @@ namespace BinarySequence
                         Calculation.PhaseShiftKeying(PointsSourceBinary, PointsMainSignal, _freqDiscr, _bitrate, _freqCarry);
                         Calculation.PhaseShiftKeying(PointsRandomBinary, PointsResearchSignal, _freqDiscr, _bitrate, _freqCarry);
                         break;
+                    default:
+                        break;
                 }
                 Calculation.InsertSequence(PointsResearchSignal, PointsMainSignal, Tau);
                 Calculation.AddNoise(PointsResearchSignal, SignalNoise, random);
@@ -163,13 +197,60 @@ namespace BinarySequence
 
             Correlation = new RelayCommand(o =>
             {
-                CorrelationWindow window = new CorrelationWindow
+                CorrelationView window = new CorrelationView
                 {
                     DataContext = new ViewModels.CorrelationViewModel(PointsMainSignal, PointsResearchSignal)
                 };
 
                 window.ShowDialog();
             });
+        }
+
+        private void ResearchCorrelation(List<DataPoint> points, ModulationType modulation)
+        {
+            points.Clear();
+            int noise = SignalNoise;
+            List<int> correlations = new List<int>();
+            List<DataPoint> corr = new List<DataPoint>();
+            int interval = _freqDiscr / _bitrate;
+
+            int steps = (10 - (-10)) / NoiseSignalStep;
+
+            for (int i = 0; i <= steps; i++)
+            {
+                for (int j = 0; j < Repeat; j++)
+                {
+                    Calculation.GenerateBinary(PointsSourceBinary, BitAmount, random);
+                    Calculation.GenerateBinary(PointsRandomBinary, BitAmount * 2, random);
+
+                    switch (modulation)
+                    {
+                        case ModulationType.Amplitude:
+                            Calculation.AmplitudeShiftKeying(PointsSourceBinary, PointsMainSignal, _freqDiscr, _bitrate, _freqCarry);
+                            Calculation.AmplitudeShiftKeying(PointsRandomBinary, PointsResearchSignal, _freqDiscr, _bitrate, _freqCarry);
+                            break;
+                        case ModulationType.Frequency:
+                            Calculation.FrequencyShiftKeying(PointsSourceBinary, PointsMainSignal, _freqDiscr, _bitrate, _freqCarry);
+                            Calculation.FrequencyShiftKeying(PointsRandomBinary, PointsResearchSignal, _freqDiscr, _bitrate, _freqCarry);
+                            break;
+                        case ModulationType.Phase:
+                            Calculation.PhaseShiftKeying(PointsSourceBinary, PointsMainSignal, _freqDiscr, _bitrate, _freqCarry);
+                            Calculation.PhaseShiftKeying(PointsRandomBinary, PointsResearchSignal, _freqDiscr, _bitrate, _freqCarry);
+                            break;
+                        default:
+                            break;
+                    }
+                    Calculation.InsertSequence(PointsResearchSignal, PointsMainSignal, Tau);
+                    Calculation.AddNoise(PointsResearchSignal, noise, random);
+                    correlations.Add(Calculation.Correlation(PointsMainSignal, PointsResearchSignal, corr));
+                }
+
+                points.Add(new DataPoint(noise, correlations.FindAll(t => t > Tau - interval / 2 && t < Tau + interval / 2).Count));
+                noise -= NoiseSignalStep;
+                correlations.Clear();
+                corr.Clear();
+            }
+            Invalidate++;
         }
     }
 }

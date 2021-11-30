@@ -37,9 +37,6 @@ namespace BinarySequence.ViewModels
             }
         }
 
-        public List<DataPoint> PointsMainSignal { get; set; }
-        public List<DataPoint> PointsResearchSignal { get; set; }
-
         public List<DataPoint> PointsCorrelation { get; set; }
 
         public CorrelationViewModel() { }
@@ -47,32 +44,9 @@ namespace BinarySequence.ViewModels
         public CorrelationViewModel(List<DataPoint> main, List<DataPoint> research)
         {
             Invalidate = 0;
-
-            PointsMainSignal = new List<DataPoint>();
-            PointsMainSignal.AddRange(main);
-
-            PointsResearchSignal = new List<DataPoint>();
-            PointsResearchSignal.AddRange(research);
-
             PointsCorrelation = new List<DataPoint>();
-
-            Correlation(PointsMainSignal, PointsResearchSignal);
-        }
-
-        private void Correlation(List<DataPoint> main, List<DataPoint> research)
-        {
-            double correlation = 0;
-            for (int i = 0; i < research.Count - main.Count; i++)
-            {
-                for (int k = 0; k < main.Count; k++)
-                {
-                    correlation += main[k].Y * research[i + k].Y;
-                }
-                PointsCorrelation.Add(new DataPoint(i, correlation));
-                correlation = 0;
-            }
-
-            FoundTau = (int)PointsCorrelation.First(x => x.Y == PointsCorrelation.Max(t => t.Y)).X;
+            FoundTau = Calculation.Correlation(main, research, PointsCorrelation);
+            Invalidate++;
         }
     }
 }
