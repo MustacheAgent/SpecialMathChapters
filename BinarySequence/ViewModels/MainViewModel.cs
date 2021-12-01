@@ -211,7 +211,7 @@ namespace BinarySequence
         private void ResearchCorrelation(List<DataPoint> points, ModulationType modulation)
         {
             points.Clear();
-            int noise = SignalNoise;
+            int noise = 10;
             List<int> correlations = new List<int>();
             List<DataPoint> corr = new List<DataPoint>();
             double timeInterval = 1000d / _bitrate;
