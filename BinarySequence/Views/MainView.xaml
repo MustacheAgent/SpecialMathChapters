@@ -105,25 +105,28 @@
             </oxy:Plot.Series>
         </oxy:Plot>
         <oxy:Plot Grid.Column="0" Grid.Row="2" Title="Зависимость" 
-                  InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2">
+                  InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2" IsLegendVisible="True" LegendPosition="BottomRight">
             <oxy:Plot.Series>
                 <oxy:LineSeries ItemsSource="{Binding ASK}" 
                                 Color="Crimson"
                                 MarkerType="Circle" 
                                 MarkerFill="Transparent" 
                                 MarkerSize="3"
+                                Title="Амплитудная"
                                 />
                 <oxy:LineSeries ItemsSource="{Binding FSK}" 
                                 Color="Navy"
                                 MarkerType="Circle" 
                                 MarkerFill="Transparent" 
                                 MarkerSize="3"
+                                Title="Частотная"
                                 />
                 <oxy:LineSeries ItemsSource="{Binding PSK}" 
                                 Color="Green"
                                 MarkerType="Circle" 
                                 MarkerFill="Transparent" 
                                 MarkerSize="3"
+                                Title="Фазовая"
                                 />
             </oxy:Plot.Series>
         </oxy:Plot>

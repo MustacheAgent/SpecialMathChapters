@@ -122,20 +122,30 @@ namespace BinarySequence
             }
         }
 
-        public static int Correlation(List<DataPoint> main, List<DataPoint> research, List<DataPoint> correlation)
+        public static int Correlation(List<DataPoint> main, List<DataPoint> research, List<DataPoint> correlation = null)
         {
             double correlationCoef = 0;
+            int max = 0;
+            double maxElement = 0;
             for (int i = 0; i < research.Count - main.Count; i++)
             {
                 for (int k = 0; k < main.Count; k++)
                 {
                     correlationCoef += main[k].Y * research[i + k].Y;
                 }
-                correlation.Add(new DataPoint(i, correlationCoef / main.Count));
+
+                if (correlationCoef > maxElement)
+                {
+                    maxElement = correlationCoef;
+                    max = i;
+                }
+
+                correlation?.Add(new DataPoint(i, correlationCoef / main.Count));
                 correlationCoef = 0;
             }
 
-            return (int)correlation.First(x => x.Y == correlation.Max(t => t.Y)).X;
+            //return (int)correlation.First(x => x.Y == correlation.Max(t => t.Y)).X;
+            return max;
         }
     }
 }

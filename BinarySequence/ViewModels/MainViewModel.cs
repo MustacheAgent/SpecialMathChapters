@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Linq;
+using System.Threading;
 
 namespace BinarySequence
 {
@@ -138,6 +139,8 @@ namespace BinarySequence
 
         Random random;
 
+        Thread threadFSK, threadPSK;
+
         public MainViewModel()
         {
             PointsSourceBinary = new List<DataPoint>();
@@ -154,10 +157,10 @@ namespace BinarySequence
             random = new Random();
 
             Invalidate = 0;
-            BitAmount = 16;
+            BitAmount = 50;
             Bitrate = 2;
-            FrequencyDiscr = 250;
-            FrequencyCarry = 3;
+            FrequencyDiscr = 150;
+            FrequencyCarry = 1;
             Tau = 500;
             SignalNoise = 10;
             NoiseSignalStep = 4;
@@ -166,8 +169,8 @@ namespace BinarySequence
             Research = new RelayCommand(o =>
             {
                 ResearchCorrelation(ASK, ModulationType.Amplitude);
-                ResearchCorrelation(FSK, ModulationType.Frequency);
-                ResearchCorrelation(PSK, ModulationType.Phase);
+                //ResearchCorrelation(FSK, ModulationType.Frequency);
+                //ResearchCorrelation(PSK, ModulationType.Phase);
             });
 
             GenerateModulation = new RelayCommand(o =>
@@ -192,6 +195,7 @@ namespace BinarySequence
                     default:
                         break;
                 }
+                Calculation.AddNoise(PointsMainSignal, SignalNoise, random);
                 Calculation.InsertSequence(PointsResearchSignal, PointsMainSignal, Tau);
                 Calculation.AddNoise(PointsResearchSignal, SignalNoise, random);
                 Invalidate++;
@@ -211,16 +215,16 @@ namespace BinarySequence
         private void ResearchCorrelation(List<DataPoint> points, ModulationType modulation)
         {
             points.Clear();
-            int noise = 10;
-            List<int> correlations = new List<int>();
+            //int noise = 10;
+            List<double> correlations = new List<double>();
             List<DataPoint> corr = new List<DataPoint>();
             double timeInterval = 1000d / _bitrate;
             double timePoint = timeInterval / (_freqDiscr / _bitrate);
             double time = Tau * timePoint;
 
-            int steps = (10 - (-10)) / NoiseSignalStep;
+            //int steps = (10 - (-10)) / NoiseSignalStep;
 
-            for (int i = 0; i <= steps; i++)
+            for (int i = 10; i >= -10; i -= NoiseSignalStep)
             {
                 for (int j = 0; j < Repeat; j++)
                 {
@@ -244,15 +248,16 @@ namespace BinarySequence
                         default:
                             break;
                     }
+                    Calculation.AddNoise(PointsMainSignal, 10, random);
                     Calculation.InsertSequence(PointsResearchSignal, PointsMainSignal, Tau);
-                    Calculation.AddNoise(PointsResearchSignal, noise, random);
-                    correlations.Add(Calculation.Correlation(PointsMainSignal, PointsResearchSignal, corr));
+                    Calculation.AddNoise(PointsResearchSignal, i, random);
+                    correlations.Add(Calculation.Correlation(PointsMainSignal, PointsResearchSignal) * timePoint);
+                    //corr.Clear();
                 }
 
-                points.Add(new DataPoint(noise, correlations.FindAll(t => t > time - timeInterval / 2 && t < time + timeInterval / 2).Count / Repeat));
-                noise -= NoiseSignalStep;
+                points.Add(new DataPoint(i, correlations.FindAll(t => t > time - (timeInterval * 0.5d) && t < time + (timeInterval * 0.5d)).Count));
+                //noise -= NoiseSignalStep;
                 correlations.Clear();
-                corr.Clear();
             }
             Invalidate++;
         }
