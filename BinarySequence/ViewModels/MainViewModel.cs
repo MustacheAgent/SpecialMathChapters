@@ -171,7 +171,7 @@ namespace BinarySequence
 
         public ModulationType Modulation { get; set; }
 
-        Random random;
+        Random random, randASK, randFSK, randPSK;
 
         Thread threadFSK, threadPSK;
 
@@ -189,13 +189,16 @@ namespace BinarySequence
             Modulation = ModulationType.Amplitude;
 
             random = new Random();
+            randASK = new Random();
+            randFSK = new Random();
+            randPSK = new Random();
 
             Invalidate = 0;
             BitAmount = 50;
             Bitrate = 2;
             FrequencyDiscr = 150;
             FrequencyCarry = 6;
-            Tau = 500;
+            Tau = 2000;
             SignalNoise = 10;
             Periods = 3;
             NoiseSignalStep = 1;
@@ -204,11 +207,15 @@ namespace BinarySequence
             NoiseSignalEnd = -20;
 
             Research = new RelayCommand(o =>
-            {   
-                new Thread(() => ResearchCorrelation(FSK, ModulationType.Frequency)).Start();
-                new Thread(() => ResearchCorrelation(PSK, ModulationType.Phase)).Start();
-                //threadPSK.Start();
-                //ResearchCorrelation(ASK, ModulationType.Amplitude);
+            {
+                new Thread(() => ResearchCorrelation(FSK, ModulationType.Frequency, randFSK))
+                { IsBackground = true }.Start();
+
+                new Thread(() => ResearchCorrelation(PSK, ModulationType.Phase, randPSK))
+                { IsBackground = true }.Start();
+
+                new Thread(() => ResearchCorrelation(ASK, ModulationType.Amplitude, randASK))
+                { IsBackground = true }.Start();
             });
 
             GenerateModulation = new RelayCommand(o =>
@@ -250,7 +257,7 @@ namespace BinarySequence
             });
         }
 
-        private void ResearchCorrelation(List<DataPoint> points, ModulationType modulation)
+        private void ResearchCorrelation(List<DataPoint> points, ModulationType modulation, Random random)
         {
             points.Clear();
             
@@ -302,8 +309,8 @@ namespace BinarySequence
 
                 points.Add(new DataPoint(i, success));
                 success = 0;
+                Invalidate++;
             }
-            Invalidate++;
         }
     }
 }
