@@ -14,6 +14,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="5*"/>
             <RowDefinition Height="5*"/>
+            <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*"/>
@@ -24,7 +25,8 @@
                     Orientation="Vertical" 
                     HorizontalAlignment="Stretch" 
                     VerticalAlignment="Center"
-                    Margin="5,12,5,13">
+                    Margin="5,12,5,13"
+                    Grid.RowSpan="2">
             <StackPanel.Resources>
                 <local:ComparisonConverter x:Key="Converter"/>
             </StackPanel.Resources>
@@ -75,28 +77,55 @@
                 <TextBox HorizontalAlignment="Stretch" 
                          VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="5"
                          Text="{Binding SignalNoise, UpdateSourceTrigger=LostFocus}"/>
-                <Label HorizontalAlignment="Center" Content="Количество повторений" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2"/>
+                <Label HorizontalAlignment="Center" Content="Количество периодов" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2"/>
                 <TextBox HorizontalAlignment="Stretch" 
                          VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="6"
-                         Text="{Binding Repeat, UpdateSourceTrigger=LostFocus}"/>
-                <Label HorizontalAlignment="Center" Content="Шаг по шуму" Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2"/>
-                <TextBox HorizontalAlignment="Stretch" 
-                         VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="7"
-                         Text="{Binding NoiseSignalStep, UpdateSourceTrigger=LostFocus}"/>
+                         Text="{Binding Periods, UpdateSourceTrigger=LostFocus}"/>
                 
                 <RadioButton Content="Амплитудная" Margin="2" Grid.Row="8" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="{Binding Path=Modulation, Converter={StaticResource Converter}, ConverterParameter={x:Static local:ModulationType.Amplitude}}"/>
                 <RadioButton Content="Частотная" Margin="2" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="{Binding Path=Modulation, Converter={StaticResource Converter}, ConverterParameter={x:Static local:ModulationType.Frequency}}"/>
                 <RadioButton Content="Фазовая" Margin="2" Grid.Row="8" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="{Binding Path=Modulation, Converter={StaticResource Converter}, ConverterParameter={x:Static local:ModulationType.Phase}}"/>
                 <Button Content="Модуляция" HorizontalAlignment="Stretch" Grid.Row="9" Margin="5" Grid.ColumnSpan="3" Command="{Binding GenerateModulation}"/>
                 <Button Content="Корреляция" HorizontalAlignment="Stretch" Grid.Row="10" Margin="5" Grid.ColumnSpan="3" Command="{Binding Correlation}"/>
-                <Button Content="Исследование" HorizontalAlignment="Stretch" Grid.Row="11" Margin="5" Grid.ColumnSpan="3" Command="{Binding Research}"/>
             </Grid>
             <!--<Button Content="Сигнал" Margin="5" Command="{Binding GenerateSignal}"/>-->
         </StackPanel>
-        <oxy:Plot Grid.Column="0" Grid.Row="0" Title="Исследуемый сигнал"
+        <StackPanel Grid.Row="2" Grid.Column="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="5*"/>
+                </Grid.ColumnDefinitions>
+                <Label HorizontalAlignment="Center" Content="Количество повторений" Grid.Column="0" Grid.Row="0"/>
+                <TextBox HorizontalAlignment="Stretch" 
+                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="0"
+                         Text="{Binding Repeat, UpdateSourceTrigger=LostFocus}"/>
+                <Label HorizontalAlignment="Center" Content="Шаг по шуму" Grid.Column="0" Grid.Row="1"/>
+                <TextBox HorizontalAlignment="Stretch" 
+                         VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="1"
+                         Text="{Binding NoiseSignalStep, UpdateSourceTrigger=LostFocus}"/>
+                <Label HorizontalAlignment="Center" Content="Начальное соотношение" Grid.Column="0" Grid.Row="2"/>
+                <TextBox HorizontalAlignment="Stretch" 
+                         VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="2"
+                         Text="{Binding NoiseSignalBegin, UpdateSourceTrigger=LostFocus}"/>
+                <Label HorizontalAlignment="Center" Content="Конечное соотношение" Grid.Column="0" Grid.Row="3"/>
+                <TextBox HorizontalAlignment="Stretch" 
+                         VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="3"
+                         Text="{Binding NoiseSignalEnd, UpdateSourceTrigger=LostFocus}"/>
+                <Button Content="Исследование" HorizontalAlignment="Stretch" Grid.Row="4" Margin="5" Grid.ColumnSpan="2" Command="{Binding Research}"/>
+            </Grid>
+        </StackPanel>
+        <oxy:Plot Grid.Column="0" Grid.Row="0" Title="Исходный сигнал" PlotType="XY"
                   InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}">
             <oxy:Plot.Series>
-                <oxy:LineSeries ItemsSource="{Binding PointsResearchSignal}" 
+                <oxy:LineSeries ItemsSource="{Binding PointsMainSignal}" 
                                 Color="Red"
                                 MarkerType="Circle" 
                                 MarkerFill="Transparent" 
@@ -104,8 +133,19 @@
                                 />
             </oxy:Plot.Series>
         </oxy:Plot>
+        <oxy:Plot Grid.Column="0" Grid.Row="1" Title="Исследуемый сигнал"
+                  InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}">
+            <oxy:Plot.Series>
+                <oxy:LineSeries ItemsSource="{Binding PointsResearchSignal}" 
+                                Color="Navy"
+                                MarkerType="Circle" 
+                                MarkerFill="Transparent" 
+                                MarkerSize="3"
+                                />
+            </oxy:Plot.Series>
+        </oxy:Plot>
         <oxy:Plot Grid.Column="0" Grid.Row="2" Title="Зависимость" 
-                  InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2" IsLegendVisible="True" LegendPosition="BottomRight">
+                  InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}" IsLegendVisible="True" LegendPosition="BottomRight">
             <oxy:Plot.Series>
                 <oxy:LineSeries ItemsSource="{Binding ASK}" 
                                 Color="Crimson"

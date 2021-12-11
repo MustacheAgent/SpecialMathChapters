@@ -52,11 +52,11 @@ namespace BinarySequence
             {
                 if (binary[k].Y == 0)
                 {
-                    modulation.Add(FSK.Generate(i, freqCarry, freqDiscr, 0));
+                    modulation.Add(FSK.Generate(i, freqCarry, freqDiscr, 0.5 * freqCarry));
                 }
                 else
                 {
-                    modulation.Add(FSK.Generate(i, freqCarry, freqDiscr, 2 * freqCarry));
+                    modulation.Add(FSK.Generate(i, freqCarry, freqDiscr, 1.5 * freqCarry));
                 }
                 if ((i % p == 0) && (i != 0))
                 {
@@ -75,11 +75,11 @@ namespace BinarySequence
             {
                 if (binary[k].Y == 0)
                 {
-                    modulation.Add(PSK.Generate(i, freqCarry, freqDiscr, -1));
+                    modulation.Add(PSK.Generate(i, freqCarry, freqDiscr, 0));
                 }
                 else
                 {
-                    modulation.Add(PSK.Generate(i, freqCarry, freqDiscr, 1));
+                    modulation.Add(PSK.Generate(i, freqCarry, freqDiscr, 180));
                 }
                 if ((i % p == 0) && (i != 0))
                 {
@@ -144,7 +144,6 @@ namespace BinarySequence
                 correlationCoef = 0;
             }
 
-            //return (int)correlation.First(x => x.Y == correlation.Max(t => t.Y)).X;
             return max;
         }
     }
