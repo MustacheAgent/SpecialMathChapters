@@ -265,7 +265,7 @@ namespace BinarySequence
             double timePoint = timeInterval / (_freqDiscr / _bitrate);
             double time = Tau * timePoint;
             double currentCorr;
-            int success = 0;
+            double success = 0;
 
             List<DataPoint> binary = new List<DataPoint>();
             List<DataPoint> rand = new List<DataPoint>();
@@ -301,13 +301,13 @@ namespace BinarySequence
                     Calculation.AddNoise(research, i, random);
 
                     currentCorr = Calculation.Correlation(main, research) * timePoint;
-                    if (currentCorr >= (time - timeInterval * 0.5d) && currentCorr <= (time + timeInterval * 0.5d))
+                    if (currentCorr >= (time - (timeInterval * 0.5d)) && currentCorr <= (time + (timeInterval * 0.5d)))
                     {
                         success++;
                     }
                 }
 
-                points.Add(new DataPoint(i, success));
+                points.Add(new DataPoint(i, success / Repeat));
                 success = 0;
                 Invalidate++;
             }
