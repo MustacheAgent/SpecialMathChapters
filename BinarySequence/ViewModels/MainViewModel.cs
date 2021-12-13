@@ -260,7 +260,7 @@ namespace BinarySequence
         private void ResearchCorrelation(List<DataPoint> points, ModulationType modulation, Random random)
         {
             points.Clear();
-            
+
             double timeInterval = 1000d / _bitrate;
             double timePoint = timeInterval / (_freqDiscr / _bitrate);
             double time = Tau * timePoint;
