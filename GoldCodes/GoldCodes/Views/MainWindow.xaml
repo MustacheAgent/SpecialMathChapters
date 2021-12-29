@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:GoldCodes"
         xmlns:vm="clr-namespace:GoldCodes.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1200" ResizeMode="CanMinimize">
+        Title="Декодирование ФМ4 сигнала" Height="800" Width="1200" ResizeMode="CanMinimize" Icon="classic.png">
     <Window.DataContext>
         <vm:MainViewModel/>
     </Window.DataContext>
