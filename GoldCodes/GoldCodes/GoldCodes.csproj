@@ -72,7 +72,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Calculation.cs" />
+    <Compile Include="Converters\Bit.cs" />
+    <Compile Include="Converters\Int.cs" />
+    <Compile Include="Converters\Points.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="Sequences.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

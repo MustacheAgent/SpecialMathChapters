@@ -7,19 +7,51 @@
         xmlns:local="clr-namespace:GoldCodes"
         xmlns:vm="clr-namespace:GoldCodes.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="1000" ResizeMode="CanMinimize">
+        Title="MainWindow" Height="800" Width="1200" ResizeMode="CanMinimize">
     <Window.DataContext>
         <vm:MainViewModel/>
     </Window.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*"/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="1.3*"/>
         </Grid.ColumnDefinitions>
-        <oxy:Plot Grid.Column="0" Grid.Row="0" Title="Исходный сигнал" InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="8*"/>
+        </Grid.RowDefinitions>
+        <oxy:Plot Grid.Column="0" Grid.Row="0" Title="Синфазная составляющая" InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}">
             <oxy:Plot.Series>
-                <oxy:LineSeries ItemsSource="{Binding PointsMainSignal}" 
+                <oxy:LineSeries ItemsSource="{Binding ComponentI}" 
                                 Color="Red"
+                                />
+            </oxy:Plot.Series>
+        </oxy:Plot>
+        <oxy:Plot Grid.Column="0" Grid.Row="1" Title="Квадратурная составляющая" InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}">
+            <oxy:Plot.Series>
+                <oxy:LineSeries ItemsSource="{Binding ComponentQ}" 
+                                Color="DarkBlue"
+                                />
+            </oxy:Plot.Series>
+        </oxy:Plot>
+        <oxy:Plot Grid.Column="0" Grid.Row="2" Title="Корреляция" InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}">
+            <oxy:Plot.Series>
+                <oxy:LineSeries ItemsSource="{Binding GoldCorrelation1}" 
+                                Color="Red"
+                                Title="Код Голда 1"
+                                />
+                <oxy:LineSeries ItemsSource="{Binding GoldCorrelation2}" 
+                                Color="BlueViolet"
+                                Title="Код Голда 2"
+                                />
+                <oxy:LineSeries ItemsSource="{Binding GoldCorrelation3}" 
+                                Color="Green"
+                                Title="Код Голда 3"
+                                />
+                <oxy:LineSeries ItemsSource="{Binding GoldCorrelation4}" 
+                                Color="Black"
+                                Title="Код Голда 4"
                                 />
             </oxy:Plot.Series>
         </oxy:Plot>
@@ -42,24 +74,68 @@
                     <RowDefinition Height="5*"/>
                     <RowDefinition Height="5*"/>
                     <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
                 </Grid.RowDefinitions>
                 <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" Content="Количество бит"/>
                 <TextBox Grid.Row="0" Grid.Column="1"
                          HorizontalAlignment="Stretch" 
                          VerticalContentAlignment="Center" 
                          Text="{Binding BitAmount, UpdateSourceTrigger=LostFocus}"/>
-                <Label HorizontalAlignment="Center" Content="Частота дискретизации, кГц" Grid.Column="0" Grid.Row="1"/>
+                <Label HorizontalAlignment="Center" Content="Несущая частота, кГц" Grid.Column="0" Grid.Row="1"/>
                 <TextBox HorizontalAlignment="Stretch" 
                          VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1"
-                         Text="{Binding FrequencyDiscr, UpdateSourceTrigger=LostFocus}"/>
-                <Label HorizontalAlignment="Center" Content="Битрейт, б/с" Grid.Column="0" Grid.Row="2"/>
+                         Text="{Binding CarryFrequency, UpdateSourceTrigger=LostFocus}"/>
+                <Label HorizontalAlignment="Center" Content="Частота дискретизации, кГц" Grid.Column="0" Grid.Row="2"/>
                 <TextBox HorizontalAlignment="Stretch" 
                          VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="2"
-                         Text="{Binding Bitrate, UpdateSourceTrigger=LostFocus}"/>
-                <Label HorizontalAlignment="Center" Content="Сигнал/шум" Grid.Column="0" Grid.Row="3"/>
+                         Text="{Binding SampleRate, UpdateSourceTrigger=LostFocus}"/>
+                <Label HorizontalAlignment="Center" Content="Битрейт, б/с" Grid.Column="0" Grid.Row="3"/>
                 <TextBox HorizontalAlignment="Stretch" 
                          VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="3"
-                         Text="{Binding SignalNoise, UpdateSourceTrigger=LostFocus}"/>
+                         Text="{Binding SampleRate, UpdateSourceTrigger=LostFocus}" IsReadOnly="True"/>
+                <Label HorizontalAlignment="Center" Content="Сигнал/шум" Grid.Column="0" Grid.Row="4"/>
+                <TextBox HorizontalAlignment="Stretch" 
+                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="4"
+                         Text="{Binding SNR, UpdateSourceTrigger=LostFocus}"/>
+                <Button Grid.Row="5" Grid.ColumnSpan="2" Margin="5" Content="Модулировать" Command="{Binding Modulate}"/>
+            </Grid>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="1" Margin="9">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type TextBox}">
+                    <Setter Property="Margin" Value="2"/>
+                </Style>
+                <Style TargetType="{x:Type Label}">
+                    <Setter Property="Margin" Value="2"/>
+                </Style>
+            </StackPanel.Resources>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="1.5*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                </Grid.RowDefinitions>
+                <Label HorizontalAlignment="Center" Content="Битовые данные" Grid.Column="0" Grid.Row="0"/>
+                <TextBox HorizontalAlignment="Stretch" 
+                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="0"
+                         Text="{Binding BinaryData, UpdateSourceTrigger=LostFocus}"/>
+                <Label HorizontalAlignment="Center" Content="Расшифровка" Grid.Column="0" Grid.Row="1"/>
+                <Label HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="Black"
+                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1"
+                         Content="{Binding DecodedData, UpdateSourceTrigger=LostFocus}"/>
+                <Label HorizontalAlignment="Center" Content="Вероятность успеха, %" Grid.Column="0" Grid.Row="2"/>
+                <Label HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="Black"
+                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="2"
+                         Content="{Binding Success, UpdateSourceTrigger=LostFocus}"/>
             </Grid>
         </StackPanel>
     </Grid>

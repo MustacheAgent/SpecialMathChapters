@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace BinarySequence
+namespace GoldCodes
 {
     public class RelayCommand : ICommand
     {
