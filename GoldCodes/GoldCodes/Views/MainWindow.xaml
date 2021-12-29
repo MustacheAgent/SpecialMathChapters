@@ -19,7 +19,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="5*"/>
             <RowDefinition Height="5*"/>
-            <RowDefinition Height="8*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
         <oxy:Plot Grid.Column="0" Grid.Row="0" Title="Синфазная составляющая" InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}">
             <oxy:Plot.Series>
@@ -55,7 +56,14 @@
                                 />
             </oxy:Plot.Series>
         </oxy:Plot>
-        <StackPanel Grid.Row="0" Grid.Column="1" Margin="8">
+        <oxy:Plot Grid.Column="0" Grid.Row="3" Title="Исследование зависимости алгоритма от шума" InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}">
+            <oxy:Plot.Series>
+                <oxy:LineSeries ItemsSource="{Binding Research}" 
+                                Color="DarkBlue"
+                                />
+            </oxy:Plot.Series>
+        </oxy:Plot>
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="8" VerticalAlignment="Center">
             <StackPanel.Resources>
                 <Style TargetType="{x:Type TextBox}">
                     <Setter Property="Margin" Value="2"/>
@@ -81,11 +89,6 @@
                     <RowDefinition Height="5*"/>
                     <RowDefinition Height="5*"/>
                 </Grid.RowDefinitions>
-                <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" Content="Количество бит"/>
-                <TextBox Grid.Row="0" Grid.Column="1"
-                         HorizontalAlignment="Stretch" 
-                         VerticalContentAlignment="Center" 
-                         Text="{Binding BitAmount, UpdateSourceTrigger=LostFocus}"/>
                 <Label HorizontalAlignment="Center" Content="Несущая частота, кГц" Grid.Column="0" Grid.Row="1"/>
                 <TextBox HorizontalAlignment="Stretch" 
                          VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1"
@@ -105,7 +108,7 @@
                 <Button Grid.Row="5" Grid.ColumnSpan="2" Margin="5" Content="Модулировать" Command="{Binding Modulate}"/>
             </Grid>
         </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="1" Margin="9">
+        <StackPanel Grid.Row="1" Grid.Column="1" Margin="8" VerticalAlignment="Center" >
             <StackPanel.Resources>
                 <Style TargetType="{x:Type TextBox}">
                     <Setter Property="Margin" Value="2"/>
@@ -136,6 +139,46 @@
                 <Label HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="Black"
                          VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="2"
                          Content="{Binding Success, UpdateSourceTrigger=LostFocus}"/>
+            </Grid>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Grid.Column="1" Margin="8" VerticalAlignment="Center">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type TextBox}">
+                    <Setter Property="Margin" Value="2"/>
+                </Style>
+                <Style TargetType="{x:Type Label}">
+                    <Setter Property="Margin" Value="2"/>
+                </Style>
+            </StackPanel.Resources>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="1.5*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="5*"/>
+                </Grid.RowDefinitions>
+                <Label HorizontalAlignment="Center" Content="Начальное SNR" Grid.Column="0" Grid.Row="0"/>
+                <TextBox HorizontalAlignment="Stretch" 
+                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="0"
+                         Text="{Binding BeginSNR, UpdateSourceTrigger=LostFocus}"/>
+                <Label HorizontalAlignment="Center" Content="Конечное SNR" Grid.Column="0" Grid.Row="1"/>
+                <TextBox HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1"
+                         Text="{Binding EndSNR, UpdateSourceTrigger=LostFocus}"/>
+                <Label HorizontalAlignment="Center" Content="Количество повторений" Grid.Column="0" Grid.Row="2"/>
+                <TextBox HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="2"
+                         Text="{Binding Repeats, UpdateSourceTrigger=LostFocus}"/>
+                <Label HorizontalAlignment="Center" Content="Шаг по SNR" Grid.Column="0" Grid.Row="3"/>
+                <TextBox HorizontalAlignment="Stretch"
+                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="3"
+                         Text="{Binding StepSNR, UpdateSourceTrigger=LostFocus}"/>
+                <Button Grid.Row="4" Grid.ColumnSpan="2" Margin="5" Content="Исследовать" Command="{Binding StartResearch}"/>
             </Grid>
         </StackPanel>
     </Grid>
