@@ -17,10 +17,10 @@
             <ColumnDefinition Width="1.3*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="4*"/>
-            <RowDefinition Height="4*"/>
-            <RowDefinition Height="6*"/>
-            <RowDefinition Height="6*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
         <oxy:Plot Grid.Column="0" Grid.Row="0" Title="Синфазная составляющая" InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}">
             <oxy:Plot.Series>
@@ -117,29 +117,18 @@
                     <Setter Property="Margin" Value="2"/>
                 </Style>
             </StackPanel.Resources>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="4*"/>
-                    <ColumnDefinition Width="1.5*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="5*"/>
-                    <RowDefinition Height="5*"/>
-                    <RowDefinition Height="5*"/>
-                </Grid.RowDefinitions>
-                <Label HorizontalAlignment="Center" Content="Битовые данные" Grid.Column="0" Grid.Row="0"/>
-                <TextBox HorizontalAlignment="Stretch" 
-                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="0"
+            <Label HorizontalAlignment="Center" Content="Битовые данные"/>
+            <TextBox HorizontalAlignment="Stretch" MinHeight="30"
+                         VerticalContentAlignment="Center"
                          Text="{Binding BinaryData, UpdateSourceTrigger=LostFocus}"/>
-                <Label HorizontalAlignment="Center" Content="Расшифровка" Grid.Column="0" Grid.Row="1"/>
-                <Label HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="Black"
-                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1"
+            <Label HorizontalAlignment="Center" Content="Расшифровка"/>
+            <Label HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="Black"
+                         VerticalContentAlignment="Center"
                          Content="{Binding DecodedData, UpdateSourceTrigger=LostFocus}"/>
-                <Label HorizontalAlignment="Center" Content="Вероятность успеха, %" Grid.Column="0" Grid.Row="2"/>
-                <Label HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="Black"
-                         VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="2"
+            <Label HorizontalAlignment="Center" Content="Вероятность успеха, %"/>
+            <Label HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="Black"
+                         VerticalContentAlignment="Center"
                          Content="{Binding Success, UpdateSourceTrigger=LostFocus}"/>
-            </Grid>
         </StackPanel>
         <StackPanel Grid.Row="3" Grid.Column="1" Margin="8" VerticalAlignment="Center">
             <StackPanel.Resources>
@@ -180,6 +169,9 @@
                          Text="{Binding StepSNR, UpdateSourceTrigger=LostFocus}"/>
                 <Button Grid.Row="4" Grid.ColumnSpan="2" Margin="5" Content="Исследовать" Command="{Binding StartResearch}"/>
             </Grid>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.Column="1" Margin="8" VerticalAlignment="Center">
+            <Button Margin="5" Content="Графики" Command="{Binding ShowGraphs}"/>
         </StackPanel>
     </Grid>
 </Window>

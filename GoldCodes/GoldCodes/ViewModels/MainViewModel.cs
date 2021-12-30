@@ -1,4 +1,5 @@
 ﻿using GoldCodes.Converters;
+using GoldCodes.Views;
 using OxyPlot;
 using System;
 using System.Collections.Generic;
@@ -175,6 +176,7 @@ namespace GoldCodes.ViewModels
 
         public ICommand Modulate { get; set; }
         public ICommand StartResearch { get; set; }
+        public ICommand ShowGraphs { get; set; }
 
         public MainViewModel()
         {
@@ -234,6 +236,16 @@ namespace GoldCodes.ViewModels
             {
                 ResearchSNR();
                 Invalidate++;
+            });
+
+            ShowGraphs = new RelayCommand(o =>
+            {
+                Graphs window = new Graphs
+                {
+                    DataContext = new GraphViewModel(bits, decs[0], decs[1], decs[2], decs[3])
+                };
+
+                window.ShowDialog();
             });
         }
 
