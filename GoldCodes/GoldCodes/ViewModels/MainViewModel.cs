@@ -173,6 +173,7 @@ namespace GoldCodes.ViewModels
         public List<DataPoint> GoldCorrelation3 { get; set; }
         public List<DataPoint> GoldCorrelation4 { get; set; }
         public List<DataPoint> Research { get; set; }
+        public List<DataPoint> BitSequence { get; set; }
 
         public ICommand Modulate { get; set; }
         public ICommand StartResearch { get; set; }
@@ -198,6 +199,7 @@ namespace GoldCodes.ViewModels
             GoldCorrelation2 = new List<DataPoint>();
             GoldCorrelation3 = new List<DataPoint>();
             GoldCorrelation4 = new List<DataPoint>();
+            BitSequence = new List<DataPoint>();
 
             Research = new List<DataPoint>();
 
@@ -225,6 +227,7 @@ namespace GoldCodes.ViewModels
 
                 I.ToPoints(ComponentI);
                 Q.ToPoints(ComponentQ);
+                bits.ToPoints(BitSequence);
                 decs[0].ToPoints(GoldCorrelation1);
                 decs[1].ToPoints(GoldCorrelation2);
                 decs[2].ToPoints(GoldCorrelation3);

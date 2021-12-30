@@ -21,7 +21,7 @@
         </Grid.RowDefinitions>
         <oxy:Plot Grid.Column="0" Grid.Row="0" Title="Битовая последовательность" InvalidateFlag="{Binding Invalidate, UpdateSourceTrigger=PropertyChanged}">
             <oxy:Plot.Series>
-                <oxy:LineSeries ItemsSource="{Binding BitSequence}" 
+                <oxy:StairStepSeries ItemsSource="{Binding BitSequence}" 
                                 Color="Purple"
                                 />
             </oxy:Plot.Series>
